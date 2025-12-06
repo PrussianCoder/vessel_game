@@ -34,7 +34,7 @@ export const Game: React.FC = () => {
   // 各船の予約された行き先（shipId -> portId）
   const [plannedDestinations, setPlannedDestinations] = useState<Record<string, PortId>>({});
   // undo用に予約履歴を保持（全履歴）
-  const [destinationsHistory, setDestinationsHistory] = useState<Record<string, PortId>[]>([]);
+  const [, setDestinationsHistory] = useState<Record<string, PortId>[]>([]);
   // ダブルクリック防止用のフラグ
   const isProcessingRef = useRef(false);
   // アイテム選択モード

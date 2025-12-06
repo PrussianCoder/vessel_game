@@ -5,7 +5,6 @@ import type {
   PortId,
   CargoColor,
   GameLogEntry,
-  ItemType,
   GameItem,
 } from '../types/game';
 import {

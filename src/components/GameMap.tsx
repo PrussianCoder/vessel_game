@@ -70,7 +70,7 @@ export const GameMap: React.FC<GameMapProps> = ({
   selectedPortId,
   selectedShipId,
   highlightedPorts = [],
-  selectedRoute,
+  selectedRoute: _selectedRoute,
   plannedRoutes = [],
 }) => {
   const { ports, ships, routes, cityInventories } = gameState;
