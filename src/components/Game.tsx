@@ -1,0 +1,594 @@
+import React, { useState, useCallback, useMemo, useRef } from 'react';
+import { GameMap } from './GameMap';
+import { GanttChart } from './GanttChart';
+import { InfoPanel } from './InfoPanel';
+import { HelpModal } from './HelpModal';
+import { useGameState } from '../hooks/useGameState';
+import type { PortId, Ship, CargoColor, ItemType } from '../types/game';
+import './Game.css';
+
+// 船の操作順序
+const SHIP_ORDER = ['large', 'medium', 'small'] as const;
+
+export const Game: React.FC = () => {
+  const {
+    gameState,
+    loadCargo,
+    returnCargo,
+    unloadCargo,
+    sail,
+    nextTurn,
+    undoTurn,
+    canUndo,
+    resetGame,
+    getAdjacentPorts,
+    getShipRemainingCapacity,
+    canLoadColor,
+    useSupplyBoost,
+    useDemandFreeze,
+    useTeleport,
+  } = useGameState();
+
+  // 現在操作中の船のインデックス（大型→中型→小型の順）
+  const [currentShipIndex, setCurrentShipIndex] = useState(0);
+  // 各船の予約された行き先（shipId -> portId）
+  const [plannedDestinations, setPlannedDestinations] = useState<Record<string, PortId>>({});
+  // undo用に予約履歴を保持（全履歴）
+  const [destinationsHistory, setDestinationsHistory] = useState<Record<string, PortId>[]>([]);
+  // ダブルクリック防止用のフラグ
+  const isProcessingRef = useRef(false);
+  // アイテム選択モード
+  const [activeItem, setActiveItem] = useState<ItemType | null>(null);
+  // ヘルプモーダル表示状態
+  const [showHelp, setShowHelp] = useState(false);
+
+  // 現在操作中の船を取得
+  const currentShip = useMemo(() => {
+    const shipId = SHIP_ORDER[currentShipIndex];
+    return gameState.ships.find(s => s.id === shipId) || null;
+  }, [gameState.ships, currentShipIndex]);
+
+  // 到達可能な港
+  const reachablePorts = useMemo(() => {
+    if (!currentShip || currentShip.status !== 'docked' || !currentShip.currentPort) {
+      return [];
+    }
+    return getAdjacentPorts(currentShip.currentPort, currentShip);
+  }, [currentShip, getAdjacentPorts]);
+
+  // 港クリック時の処理（行き先を予約）
+  const handlePortClick = useCallback((portId: PortId) => {
+    // アイテム使用モードの場合
+    if (activeItem === 'supplyBoost') {
+      const port = gameState.ports[portId];
+      if (port.type === 'supply') {
+        useSupplyBoost(portId);
+        setActiveItem(null);
+      }
+      return;
+    }
+    if (activeItem === 'teleport' && currentShip) {
+      useTeleport(currentShip.id, portId);
+      setActiveItem(null);
+      // テレポート後は予約をクリア
+      setPlannedDestinations(prev => {
+        const { [currentShip.id]: _, ...rest } = prev;
+        return rest;
+      });
+      return;
+    }
+
+    // 到達可能な港をクリックした場合は行き先を予約（即出港ではなく次ターンで出港）
+    if (currentShip && currentShip.status === 'docked' && reachablePorts.includes(portId)) {
+      setPlannedDestinations(prev => {
+        // 同じ行き先をクリックした場合は予約解除
+        if (prev[currentShip.id] === portId) {
+          const { [currentShip.id]: _, ...rest } = prev;
+          return rest;
+        }
+        // 新しい行き先を予約
+        return { ...prev, [currentShip.id]: portId };
+      });
+    }
+  }, [currentShip, reachablePorts, activeItem, gameState.ports, useSupplyBoost, useTeleport]);
+
+
+  // 船クリック時の処理
+  const handleShipClick = useCallback((ship: Ship) => {
+    const index = SHIP_ORDER.indexOf(ship.id as typeof SHIP_ORDER[number]);
+    if (index !== -1) {
+      setCurrentShipIndex(index);
+    }
+  }, []);
+
+  // 貨物積み込み（1個ずつ）- ダブルクリック防止付き
+  const handleLoadCargo = useCallback((color: CargoColor) => {
+    if (isProcessingRef.current) {
+      return;
+    }
+    if (!currentShip) {
+      return;
+    }
+    isProcessingRef.current = true;
+    loadCargo(currentShip.id, color, 1);
+    // 300msのクールダウン
+    setTimeout(() => {
+      isProcessingRef.current = false;
+    }, 300);
+  }, [currentShip, loadCargo]);
+
+  // 貨物を戻す（1個ずつ）- ダブルクリック防止付き
+  const handleReturnCargo = useCallback((color: CargoColor) => {
+    if (isProcessingRef.current) {
+      return;
+    }
+    if (!currentShip) {
+      return;
+    }
+    isProcessingRef.current = true;
+    returnCargo(currentShip.id, color);
+    setTimeout(() => {
+      isProcessingRef.current = false;
+    }, 300);
+  }, [currentShip, returnCargo]);
+
+  // 貨物荷下ろし
+  const handleUnloadCargo = useCallback(() => {
+    if (currentShip) {
+      unloadCargo(currentShip.id);
+    }
+  }, [currentShip, unloadCargo]);
+
+  // 次の船へ
+  const handleNextShip = useCallback(() => {
+    if (currentShipIndex < SHIP_ORDER.length - 1) {
+      setCurrentShipIndex(currentShipIndex + 1);
+    }
+  }, [currentShipIndex]);
+
+  // 前の船へ
+  const handlePrevShip = useCallback(() => {
+    if (currentShipIndex > 0) {
+      setCurrentShipIndex(currentShipIndex - 1);
+    }
+  }, [currentShipIndex]);
+
+  // ターン終了
+  const handleNextTurn = useCallback(() => {
+    // 現在の予約を履歴に保存（全履歴を保持）
+    setDestinationsHistory(prevHistory => {
+      return [...prevHistory, { ...plannedDestinations }];
+    });
+
+    // 予約された行き先に向けて全ての船を出港させる
+    Object.entries(plannedDestinations).forEach(([shipId, destination]) => {
+      const ship = gameState.ships.find(s => s.id === shipId);
+      if (ship && ship.status === 'docked') {
+        sail(shipId, destination);
+      }
+    });
+    // 予約をクリア
+    setPlannedDestinations({});
+    nextTurn();
+    setCurrentShipIndex(0);
+    setActiveItem(null);
+  }, [nextTurn, plannedDestinations, gameState.ships, sail]);
+
+  // 前のターンに戻る
+  const handleUndo = useCallback(() => {
+    if (undoTurn()) {
+      // 予約履歴から復元
+      setDestinationsHistory(prevHistory => {
+        if (prevHistory.length > 0) {
+          const previousDestinations = prevHistory[prevHistory.length - 1];
+          setPlannedDestinations(previousDestinations);
+          return prevHistory.slice(0, -1);
+        }
+        setPlannedDestinations({});
+        return prevHistory;
+      });
+      setCurrentShipIndex(0);
+      setActiveItem(null);
+    }
+  }, [undoTurn]);
+
+  // ゲームリセット（履歴もクリア）
+  const handleReset = useCallback(() => {
+    resetGame();
+    setPlannedDestinations({});
+    setDestinationsHistory([]);
+    setCurrentShipIndex(0);
+    setActiveItem(null);
+  }, [resetGame]);
+
+  // アイテム使用ハンドラ
+  const handleItemClick = useCallback((itemId: ItemType) => {
+    const item = gameState.items.find((i) => i.id === itemId);
+    if (!item || item.used) return;
+
+    if (itemId === 'demandFreeze') {
+      // 消費抑制は即時発動
+      useDemandFreeze();
+    } else {
+      // 補給船団・緊急輸送は対象選択モードへ
+      setActiveItem(itemId);
+    }
+  }, [gameState.items, useDemandFreeze]);
+
+  // 現在の港の情報
+  const currentPort = currentShip?.currentPort ? gameState.ports[currentShip.currentPort] : null;
+
+  // 色名からCSSカラーへ
+  const getCargoColor = (color: string) => {
+    switch (color) {
+      case 'red': return '#ff6b6b';
+      case 'blue': return '#4dabf7';
+      case 'yellow': return '#ffd43b';
+      case 'green': return '#69db7c';
+      default: return '#888';
+    }
+  };
+
+  // 港の在庫を箱の配列として表示
+  const renderCargoBoxes = (stock: Record<CargoColor, number>, isLoading: boolean) => {
+    const boxes: { color: CargoColor; index: number }[] = [];
+    // 整数部分のみ表示（小数は累積中）
+    (['red', 'blue', 'yellow', 'green'] as CargoColor[]).forEach(color => {
+      const integerStock = Math.floor(stock[color]);
+      for (let i = 0; i < integerStock; i++) {
+        boxes.push({ color, index: i });
+      }
+    });
+
+    return (
+      <div className="cargo-boxes">
+        {boxes.map((box, idx) => {
+          const canLoad = isLoading &&
+            currentShip &&
+            getShipRemainingCapacity(currentShip) > 0 &&
+            canLoadColor(currentShip, box.color);
+          return (
+            <div
+              key={`${box.color}-${box.index}-${idx}`}
+              className={`cargo-box ${box.color} ${canLoad ? 'clickable' : 'disabled'}`}
+              style={{ backgroundColor: getCargoColor(box.color), userSelect: 'none' }}
+              onPointerDown={(e) => {
+                if (e.button !== 0) return; // 左クリックのみ
+                e.preventDefault();
+                e.stopPropagation();
+                (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+                if (canLoad) handleLoadCargo(box.color);
+              }}
+              onPointerUp={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onDoubleClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              title={canLoad ? 'クリックして積み込み' : ''}
+            />
+          );
+        })}
+        {boxes.length === 0 && <span className="no-cargo">在庫なし</span>}
+      </div>
+    );
+  };
+
+  // 船の積荷を箱として表示（クリックで戻せる）
+  const renderShipCargoBoxes = (canReturn: boolean) => {
+    if (!currentShip) return null;
+    const boxes: { color: CargoColor; index: number }[] = [];
+    currentShip.cargo.forEach(c => {
+      for (let i = 0; i < c.quantity; i++) {
+        boxes.push({ color: c.color, index: i });
+      }
+    });
+
+    return (
+      <div className="ship-cargo-boxes">
+        {boxes.map((box, idx) => (
+          <div
+            key={`ship-${box.color}-${box.index}-${idx}`}
+            className={`cargo-box ${box.color} ${canReturn ? 'returnable' : ''}`}
+            style={{ backgroundColor: getCargoColor(box.color), userSelect: 'none' }}
+            onPointerDown={(e) => {
+              if (e.button !== 0) return;
+              e.preventDefault();
+              e.stopPropagation();
+              (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+              if (canReturn) handleReturnCargo(box.color);
+            }}
+            onPointerUp={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            onDoubleClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            title={canReturn ? 'クリックして港に戻す' : ''}
+          />
+        ))}
+        {/* 空きスロット */}
+        {currentShip && Array.from({ length: currentShip.capacity - boxes.length }).map((_, idx) => (
+          <div key={`empty-${idx}`} className="cargo-box empty" />
+        ))}
+      </div>
+    );
+  };
+
+  // 全船の予約ルート情報（地図上に表示するため）
+  const plannedRoutes = useMemo(() => {
+    const routes: Array<{ shipId: string; from: PortId; to: PortId }> = [];
+    Object.entries(plannedDestinations).forEach(([shipId, destination]) => {
+      const ship = gameState.ships.find(s => s.id === shipId);
+      if (ship && ship.status === 'docked' && ship.currentPort) {
+        routes.push({
+          shipId,
+          from: ship.currentPort,
+          to: destination,
+        });
+      }
+    });
+    return routes;
+  }, [plannedDestinations, gameState.ships]);
+
+  // 現在選択中の船の予約ルート（従来のselectedRouteと互換性のため）
+  const selectedRoute = useMemo(() => {
+    if (!currentShip?.currentPort) return null;
+    const destination = plannedDestinations[currentShip.id];
+    if (!destination) return null;
+    return {
+      from: currentShip.currentPort,
+      to: destination,
+    };
+  }, [currentShip?.currentPort, currentShip?.id, plannedDestinations]);
+
+  // 供給拠点かどうか
+  const isAtSupplyPort = currentPort?.type === 'supply';
+
+  return (
+    <div className="game-container">
+      {/* ヘッダー */}
+      <header className="game-header">
+        <h1>Vessel Game</h1>
+        <div className="header-info">
+          <span className="turn-info">ターン {gameState.turn}/{gameState.maxTurns}</span>
+          <span className={`demand-level level-${gameState.demandLevel}`}>需要 Lv{gameState.demandLevel}</span>
+          <span className="score-info">スコア: {gameState.score}</span>
+        </div>
+        <div className="header-controls">
+          <button
+            className="undo-btn"
+            onClick={handleUndo}
+            disabled={!canUndo || gameState.status !== 'playing'}
+            title="前のターンに戻る"
+          >
+            ↩ 戻る
+          </button>
+          <button
+            className="next-turn-btn"
+            onClick={handleNextTurn}
+            disabled={gameState.status !== 'playing'}
+          >
+            次のターンへ
+          </button>
+          <button className="reset-btn" onClick={handleReset}>
+            リセット
+          </button>
+          <button className="help-btn" onClick={() => setShowHelp(true)}>
+            ?
+          </button>
+        </div>
+      </header>
+
+      <div className="game-content">
+        {/* 左側：地図 */}
+        <div className="map-section">
+          <GameMap
+            gameState={gameState}
+            onPortClick={handlePortClick}
+            onShipClick={handleShipClick}
+            selectedPortId={currentShip?.currentPort || null}
+            selectedShipId={currentShip?.id || null}
+            highlightedPorts={reachablePorts}
+            selectedRoute={selectedRoute}
+            plannedRoutes={plannedRoutes}
+          />
+        </div>
+
+        {/* 右側：情報パネル */}
+        <div className="right-section">
+          {/* 船積載情報 */}
+          <div className="gantt-section">
+            <GanttChart gameState={gameState} currentShipId={currentShip?.id} />
+          </div>
+
+          {/* 船操作パネル */}
+          {currentShip && currentShip.status === 'docked' && (
+            <div className="ship-control-section">
+              <div className="ship-nav">
+                <button
+                  onClick={handlePrevShip}
+                  disabled={currentShipIndex === 0}
+                  className="nav-btn"
+                >
+                  ◀ 前
+                </button>
+                <span className="current-ship-name">{currentShip.name}</span>
+                <button
+                  onClick={handleNextShip}
+                  disabled={currentShipIndex === SHIP_ORDER.length - 1}
+                  className="nav-btn"
+                >
+                  次 ▶
+                </button>
+              </div>
+
+              <div className="ship-status">
+                <span className="location">現在地: {currentPort?.nameJp || '不明'}</span>
+                <span className="capacity">
+                  積載: {currentShip.cargo.reduce((sum, c) => sum + c.quantity, 0)}/{currentShip.capacity}
+                </span>
+                <span className="colors">積載可能色数: {currentShip.maxColors}</span>
+              </div>
+
+              {/* 予約された行き先表示 */}
+              {plannedDestinations[currentShip.id] && (
+                <div className="planned-destination">
+                  <span className="destination-label">
+                    次ターンの行き先: <strong>{gameState.ports[plannedDestinations[currentShip.id]].nameJp}</strong>
+                  </span>
+                  <button
+                    className="cancel-destination-btn"
+                    onClick={() => setPlannedDestinations(prev => {
+                      const { [currentShip.id]: _, ...rest } = prev;
+                      return rest;
+                    })}
+                  >
+                    キャンセル
+                  </button>
+                </div>
+              )}
+              {!plannedDestinations[currentShip.id] && reachablePorts.length > 0 && (
+                <div className="destination-hint">
+                  緑の港をクリックして行き先を設定
+                </div>
+              )}
+
+              {/* 船の積荷（箱表示） */}
+              <div className="ship-cargo-section">
+                <h4>船の積荷{isAtSupplyPort && currentShip.cargo.length > 0 ? '（クリックで戻す）' : ''}</h4>
+                {renderShipCargoBoxes(isAtSupplyPort)}
+              </div>
+
+              {/* 積み込みUI（供給拠点の場合） */}
+              {currentPort?.type === 'supply' && (
+                <div className="load-section">
+                  <h4>港の在庫（クリックで積み込み）</h4>
+                  {renderCargoBoxes(currentPort.cargoStock, true)}
+                </div>
+              )}
+
+              {/* 荷下ろしUI（需要拠点の場合） */}
+              {currentPort?.type === 'demand' && currentShip.cargo.length > 0 && (
+                <div className="unload-section">
+                  <button className="unload-btn" onClick={handleUnloadCargo}>
+                    荷下ろし（{currentPort.demandColor}の貨物を降ろす）
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 航海中の船の情報 */}
+          {currentShip && currentShip.status === 'sailing' && (
+            <div className="ship-control-section sailing">
+              <div className="ship-nav">
+                <button
+                  onClick={handlePrevShip}
+                  disabled={currentShipIndex === 0}
+                  className="nav-btn"
+                >
+                  ◀ 前
+                </button>
+                <span className="current-ship-name">{currentShip.name}</span>
+                <button
+                  onClick={handleNextShip}
+                  disabled={currentShipIndex === SHIP_ORDER.length - 1}
+                  className="nav-btn"
+                >
+                  次 ▶
+                </button>
+              </div>
+              <div className="sailing-info">
+                <p>航海中: {currentShip.sailingTo && gameState.ports[currentShip.sailingTo].nameJp}へ</p>
+                <p>残り {currentShip.remainingTurns} ターン</p>
+              </div>
+              <div className="ship-cargo-section">
+                <h4>船の積荷</h4>
+                {renderShipCargoBoxes(false)}
+              </div>
+            </div>
+          )}
+
+          {/* アイテムパネル */}
+          <div className="items-section">
+            <h4>アイテム</h4>
+            <div className="items-list">
+              {gameState.items.map((item) => (
+                <button
+                  key={item.id}
+                  className={`item-btn ${item.used ? 'used' : ''} ${activeItem === item.id ? 'active' : ''}`}
+                  onClick={() => handleItemClick(item.id)}
+                  disabled={item.used || gameState.status !== 'playing'}
+                  title={item.description}
+                >
+                  <span className="item-icon">
+                    {item.id === 'supplyBoost' && '📦'}
+                    {item.id === 'demandFreeze' && '❄️'}
+                    {item.id === 'teleport' && '⚡'}
+                  </span>
+                  <span className="item-name">{item.name}</span>
+                  {item.used && <span className="item-used">使用済</span>}
+                </button>
+              ))}
+            </div>
+            {activeItem && (
+              <div className="item-hint">
+                {activeItem === 'supplyBoost' && '供給拠点（灰色の港）をクリックして在庫を満タンにします'}
+                {activeItem === 'teleport' && '任意の港をクリックして船を移動します'}
+                <button className="cancel-item-btn" onClick={() => setActiveItem(null)}>キャンセル</button>
+              </div>
+            )}
+          </div>
+
+          {/* 情報パネル */}
+          <div className="info-section">
+            <InfoPanel gameState={gameState} plannedDestinations={plannedDestinations} />
+          </div>
+        </div>
+      </div>
+
+      {/* ゲーム終了オーバーレイ */}
+      {gameState.status !== 'playing' && (
+        <div className="game-end-overlay">
+          <div className={`game-end-modal ${gameState.status}`}>
+            <h2>{gameState.status === 'cleared' ? 'GAME CLEAR!' : 'GAME OVER'}</h2>
+            <p className="end-message">
+              {gameState.status === 'cleared'
+                ? '30ターン生き残りました！素晴らしい配船計画です！'
+                : '在庫が枯渇してしまいました...'}
+            </p>
+            <div className="end-stats">
+              <div className="stat">
+                <span className="stat-label">到達ターン</span>
+                <span className="stat-value">{gameState.turn - 1}</span>
+              </div>
+              <div className="stat">
+                <span className="stat-label">最終スコア</span>
+                <span className="stat-value">{gameState.score}</span>
+              </div>
+            </div>
+            <button className="retry-btn" onClick={handleReset}>
+              もう一度プレイ
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ヘルプモーダル */}
+      <HelpModal isOpen={showHelp} onClose={() => setShowHelp(false)} />
+    </div>
+  );
+};

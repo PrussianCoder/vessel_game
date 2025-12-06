@@ -1,0 +1,244 @@
+.gantt-chart {
+  background: rgba(20, 30, 50, 0.9);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.gantt-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 4px;
+}
+
+.gantt-ship-label {
+  width: 100px;
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+}
+
+.gantt-timeline {
+  display: flex;
+  flex: 1;
+}
+
+.gantt-turn {
+  flex: 1;
+  text-align: center;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 2px 0;
+}
+
+.gantt-turn.current {
+  color: #4dabf7;
+  font-weight: bold;
+}
+
+.gantt-turn.past {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.gantt-row {
+  display: flex;
+  align-items: center;
+  margin: 4px 0;
+  padding: 3px 6px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.gantt-row.current {
+  background: rgba(77, 171, 247, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(77, 171, 247, 0.4);
+}
+
+.gantt-ship-name {
+  width: 100px;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.ship-icon {
+  font-size: 16px;
+}
+
+.ship-name-text {
+  color: inherit;
+}
+
+.gantt-ship-name.large .ship-name-text {
+  color: #ff9f43;
+}
+
+.gantt-ship-name.medium .ship-name-text {
+  color: #9775fa;
+}
+
+.gantt-ship-name.small .ship-name-text {
+  color: #38d9a9;
+}
+
+.ship-location {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-left: 2px;
+  font-weight: normal;
+}
+
+.gantt-bars {
+  flex: 1;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.gantt-past-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.gantt-current-line {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: #4dabf7;
+  box-shadow: 0 0 8px #4dabf7;
+  z-index: 10;
+}
+
+.gantt-sailing-bar {
+  position: absolute;
+  top: 2px;
+  height: calc(100% - 4px);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  color: white;
+  overflow: hidden;
+}
+
+.gantt-sailing-bar.large {
+  background: linear-gradient(90deg, rgba(255, 159, 67, 0.8), rgba(255, 159, 67, 0.5));
+}
+
+.gantt-sailing-bar.medium {
+  background: linear-gradient(90deg, rgba(151, 117, 250, 0.8), rgba(151, 117, 250, 0.5));
+}
+
+.gantt-sailing-bar.small {
+  background: linear-gradient(90deg, rgba(56, 217, 169, 0.8), rgba(56, 217, 169, 0.5));
+}
+
+.sailing-label {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding: 0 4px;
+}
+
+/* 需要レベル表示 */
+.gantt-demand-level {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gantt-demand-level .gantt-bars {
+  display: flex;
+  height: 16px;
+}
+
+.demand-level-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  color: white;
+}
+
+.demand-level-bar.lv1 {
+  background: rgba(100, 200, 100, 0.3);
+}
+
+.demand-level-bar.lv2 {
+  background: rgba(255, 200, 100, 0.3);
+}
+
+.demand-level-bar.lv3 {
+  background: rgba(255, 100, 100, 0.3);
+}
+
+/* 積載情報表示 */
+.gantt-cargo-display {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cargo-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.cargo-bar-bg {
+  flex: 1;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cargo-bar-fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.cargo-count {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  min-width: 40px;
+  text-align: right;
+}
+
+.cargo-details {
+  display: flex;
+  gap: 8px;
+  min-width: 100px;
+}
+
+.cargo-item {
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.cargo-empty {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+}

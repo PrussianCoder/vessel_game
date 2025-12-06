@@ -1,0 +1,306 @@
+.info-panel {
+  background: rgba(20, 30, 50, 0.9);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  height: 100%;
+  overflow-y: auto;
+}
+
+.info-section {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.info-section h3 {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
+  margin: 0 0 6px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ターン情報 */
+.turn-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.turn-display {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.turn-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+}
+
+.turn-number {
+  font-size: 20px;
+  font-weight: bold;
+  color: #4dabf7;
+}
+
+.turn-max {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+}
+
+.demand-level {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.demand-level.level-1 {
+  background: rgba(100, 200, 100, 0.3);
+  color: #69db7c;
+}
+
+.demand-level.level-2 {
+  background: rgba(255, 200, 100, 0.3);
+  color: #ffd43b;
+}
+
+.demand-level.level-3 {
+  background: rgba(255, 100, 100, 0.3);
+  color: #ff6b6b;
+}
+
+.score-display {
+  color: #ffd43b;
+  font-weight: bold;
+}
+
+/* 在庫表示 */
+.inventory-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  margin-bottom: 4px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.header-city {
+  width: 50px;
+}
+
+.header-bar {
+  flex: 1;
+  text-align: center;
+}
+
+.header-stock {
+  width: 28px;
+  text-align: right;
+}
+
+.header-demand {
+  width: 32px;
+  text-align: center;
+}
+
+.header-incoming {
+  width: 36px;
+  text-align: center;
+}
+
+.inventory-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 2px 0;
+  padding: 3px;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.inventory-row.danger {
+  background: rgba(255, 100, 100, 0.2);
+  animation: pulse 1s infinite;
+}
+
+.inventory-row.warning {
+  background: rgba(255, 200, 100, 0.1);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.inventory-city {
+  width: 50px;
+  font-size: 11px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.city-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.city-indicator.red {
+  background: #ff6b6b;
+}
+
+.city-indicator.blue {
+  background: #4dabf7;
+}
+
+.city-indicator.yellow {
+  background: #ffd43b;
+}
+
+.city-indicator.green {
+  background: #69db7c;
+}
+
+.inventory-bar-container {
+  flex: 1;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.inventory-bar {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+.inventory-bar.red {
+  background: linear-gradient(90deg, #ff6b6b, #ff8787);
+}
+
+.inventory-bar.blue {
+  background: linear-gradient(90deg, #4dabf7, #74c0fc);
+}
+
+.inventory-bar.yellow {
+  background: linear-gradient(90deg, #ffd43b, #ffe066);
+}
+
+.inventory-bar.green {
+  background: linear-gradient(90deg, #69db7c, #8ce99a);
+}
+
+.inventory-value {
+  width: 28px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+}
+
+.inventory-demand {
+  width: 32px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: #ff6b6b;
+}
+
+.inventory-incoming {
+  width: 36px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.inventory-incoming.has-incoming {
+  color: #69db7c;
+}
+
+/* ログ表示 */
+.log-container {
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.log-entry {
+  padding: 4px 0;
+  font-size: 11px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+.log-turn {
+  color: rgba(255, 255, 255, 0.4);
+  margin-right: 4px;
+}
+
+.log-message {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.log-entry.warning .log-message {
+  color: #ffd43b;
+}
+
+.log-entry.danger .log-message {
+  color: #ff6b6b;
+}
+
+.log-entry.success .log-message {
+  color: #69db7c;
+}
+
+/* ゲーム状態オーバーレイ */
+.game-status-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 12px;
+  z-index: 100;
+}
+
+.game-status-overlay.gameover {
+  background: rgba(100, 0, 0, 0.9);
+}
+
+.game-status-overlay.cleared {
+  background: rgba(0, 100, 50, 0.9);
+}
+
+.status-message {
+  font-size: 32px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 20px currentColor;
+  margin-bottom: 16px;
+}
+
+.final-score {
+  font-size: 18px;
+  color: #ffd43b;
+}

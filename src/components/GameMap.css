@@ -1,0 +1,209 @@
+.game-map {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.game-map .leaflet-container {
+  width: 100%;
+  height: 100%;
+  background: #2e86ab;
+}
+
+/* 地図タイルを薄くする */
+.game-map .leaflet-tile-pane {
+  opacity: 0.6;
+}
+
+/* ツールチップのスタイル */
+.leaflet-tooltip {
+  background: rgba(20, 20, 30, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  color: white !important;
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.leaflet-tooltip::before {
+  border-top-color: rgba(20, 20, 30, 0.95) !important;
+}
+
+.tooltip-content {
+  text-align: center;
+}
+
+.tooltip-content strong {
+  font-size: 13px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.port-tooltip .cargo-stock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.port-tooltip .cargo-stock span {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.ship-tooltip .ship-info {
+  font-size: 11px;
+  color: #aaa;
+  margin: 4px 0;
+}
+
+.ship-tooltip .ship-cargo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.ship-tooltip .ship-cargo span {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.ship-tooltip .ship-sailing {
+  font-size: 10px;
+  color: #74c0fc;
+  margin-top: 4px;
+}
+
+/* 船アイコンのスタイル */
+.ship-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.ship-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.ship-marker:hover {
+  transform: scale(1.2);
+}
+
+
+.cargo-indicators {
+  display: flex;
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 4px;
+  padding: 1px 3px;
+  margin-top: -2px;
+}
+
+.cargo-indicators span {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.ship-cargo-indicator {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Leaflet attribution を小さく */
+.leaflet-control-attribution {
+  font-size: 8px;
+  background: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 需要拠点アイコン */
+.demand-port-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* 供給拠点アイコン */
+.supply-port-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.supply-port-marker {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.supply-stock-labels {
+  display: flex;
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+.supply-stock-labels .stock-label {
+  font-size: 10px;
+  font-weight: bold;
+  padding: 0 2px;
+}
+
+.supply-stock-labels .stock-label.red {
+  color: #ff6b6b;
+}
+
+.supply-stock-labels .stock-label.blue {
+  color: #4dabf7;
+}
+
+.supply-stock-labels .stock-label.yellow {
+  color: #ffd43b;
+}
+
+.supply-stock-labels .stock-label.green {
+  color: #69db7c;
+}
+
+.supply-stock-labels .supply-plus {
+  font-size: 8px;
+  color: #51cf66;
+  margin-left: 1px;
+}
+
+/* 需要情報 */
+.demand-info {
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+/* 拠点名ツールチップ */
+.port-tooltip {
+  position: absolute;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+  z-index: 1000;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
