@@ -1,0 +1,246 @@
+.start-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(180deg, #1a3a52 0%, #2e5a7a 50%, #1e4a6a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.start-content {
+  text-align: center;
+  z-index: 10;
+  padding: 40px;
+}
+
+/* タイトルセクション */
+.title-section {
+  margin-bottom: 24px;
+}
+
+.game-title {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.title-icon {
+  font-size: 4rem;
+  animation: shipFloat 3s ease-in-out infinite;
+}
+
+@keyframes shipFloat {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+.game-subtitle {
+  font-size: 1.4rem;
+  color: #a8d4f0;
+  margin-top: 8px;
+  letter-spacing: 4px;
+}
+
+/* 説明セクション */
+.description-section {
+  margin-bottom: 32px;
+  color: #cce7f5;
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+.description-section p {
+  margin: 4px 0;
+}
+
+/* ボタンセクション */
+.button-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.start-button {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  border: none;
+  padding: 18px 48px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.start-button:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5);
+}
+
+.start-button:active {
+  transform: translateY(0);
+}
+
+.guide-button {
+  background: transparent;
+  color: #a8d4f0;
+  border: 2px solid #a8d4f0;
+  padding: 12px 32px;
+  font-size: 1.1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guide-button:hover {
+  background: rgba(168, 212, 240, 0.15);
+  border-color: white;
+  color: white;
+}
+
+.button-icon {
+  font-size: 1.2em;
+}
+
+/* 情報セクション */
+.info-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.info-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px 32px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.info-header {
+  font-size: 0.9rem;
+  color: #ffd700;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.info-card p {
+  margin: 4px 0;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.info-detail {
+  font-size: 0.9rem !important;
+  color: #a8d4f0 !important;
+  font-weight: normal !important;
+}
+
+.ship-preview {
+  display: flex;
+  gap: 24px;
+}
+
+.ship-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: #a8d4f0;
+  font-size: 0.9rem;
+}
+
+.ship-item .ship-emoji {
+  font-size: 2rem;
+}
+
+/* 背景装飾（波） */
+.background-decoration {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") repeat-x;
+  background-size: 50% 100%;
+  animation: waveMove 20s linear infinite;
+}
+
+.wave1 {
+  opacity: 0.3;
+  animation-duration: 20s;
+}
+
+.wave2 {
+  opacity: 0.2;
+  animation-duration: 15s;
+  animation-delay: -5s;
+  bottom: 10px;
+}
+
+.wave3 {
+  opacity: 0.15;
+  animation-duration: 25s;
+  animation-delay: -10s;
+  bottom: 20px;
+}
+
+@keyframes waveMove {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .game-title {
+    font-size: 2.5rem;
+  }
+
+  .title-icon {
+    font-size: 3rem;
+  }
+
+  .game-subtitle {
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+  }
+
+  .start-button {
+    padding: 14px 36px;
+    font-size: 1.2rem;
+  }
+
+  .ship-preview {
+    gap: 16px;
+  }
+}

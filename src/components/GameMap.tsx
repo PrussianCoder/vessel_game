@@ -63,6 +63,54 @@ const getShipColor = (shipId: string, isCurrentShip: boolean): string => {
   return isCurrentShip ? colors.primary : colors.light;
 };
 
+// BFSで最短パスを計算（経由する港のリストを返す）
+const findPath = (
+  from: PortId,
+  to: PortId,
+  routes: { from: PortId; to: PortId }[]
+): PortId[] => {
+  if (from === to) return [from];
+
+  // 隣接リストを構築
+  const adjacency = new Map<PortId, PortId[]>();
+  for (const route of routes) {
+    if (!adjacency.has(route.from)) adjacency.set(route.from, []);
+    if (!adjacency.has(route.to)) adjacency.set(route.to, []);
+    adjacency.get(route.from)!.push(route.to);
+    adjacency.get(route.to)!.push(route.from);
+  }
+
+  // BFS
+  const queue: PortId[] = [from];
+  const visited = new Set<PortId>([from]);
+  const parent = new Map<PortId, PortId>();
+
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    if (current === to) {
+      // パスを復元
+      const path: PortId[] = [];
+      let node: PortId | undefined = to;
+      while (node !== undefined) {
+        path.unshift(node);
+        node = parent.get(node);
+      }
+      return path;
+    }
+
+    for (const neighbor of adjacency.get(current) || []) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        parent.set(neighbor, current);
+        queue.push(neighbor);
+      }
+    }
+  }
+
+  // パスが見つからない場合は直線
+  return [from, to];
+};
+
 export const GameMap: React.FC<GameMapProps> = ({
   gameState,
   onPortClick,
@@ -84,9 +132,9 @@ export const GameMap: React.FC<GameMapProps> = ({
   const getCargoColor = (color: string) => {
     switch (color) {
       case 'red': return '#ff6b6b';
-      case 'blue': return '#4dabf7';
+      case 'blue': return '#00bfff'; // 明るいシアン
       case 'yellow': return '#ffd43b';
-      case 'green': return '#69db7c';
+      case 'green': return '#7fff00'; // 黄緑（チャートリューズ）で識別しやすく
       default: return '#888';
     }
   };
@@ -218,13 +266,15 @@ export const GameMap: React.FC<GameMapProps> = ({
   return (
     <div className="game-map">
       <MapContainer
-        center={[20, 130]}
-        zoom={4}
+        center={[22, 125]}
+        zoom={3.7}
+        zoomSnap={0.01}
+        zoomDelta={0.1}
         scrollWheelZoom={false}
         dragging={false}
         zoomControl={false}
         doubleClickZoom={false}
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '90%', aspectRatio: '1/1', maxHeight: '85vh' }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -251,25 +301,37 @@ export const GameMap: React.FC<GameMapProps> = ({
           );
         })}
 
-        {/* 予約されたルートを描画（船ごとに色分け、選択中以外は薄く表示） */}
+        {/* 予約されたルートを描画（船ごとに色分け、エッジを経由するパスを表示） */}
         {plannedRoutes.map((route) => {
           if (!ports[route.from] || !ports[route.to]) return null;
           const isCurrentShip = route.shipId === selectedShipId;
           const routeColor = getShipColor(route.shipId, isCurrentShip);
-          return (
-            <Polyline
-              key={`planned-${route.shipId}`}
-              positions={[
-                toLatLng(ports[route.from].position.lat, ports[route.from].position.lng),
-                toLatLng(ports[route.to].position.lat, ports[route.to].position.lng),
-              ]}
-              pathOptions={{
-                color: routeColor,
-                weight: isCurrentShip ? 5 : 3,
-                opacity: 1,
-              }}
-            />
-          );
+
+          // パスを計算
+          const path = findPath(route.from, route.to, routes);
+
+          // パス上の各エッジを描画
+          return path.slice(0, -1).map((portId, idx) => {
+            const nextPortId = path[idx + 1];
+            const fromPort = ports[portId];
+            const toPort = ports[nextPortId];
+            if (!fromPort || !toPort) return null;
+
+            return (
+              <Polyline
+                key={`planned-${route.shipId}-${idx}`}
+                positions={[
+                  toLatLng(fromPort.position.lat, fromPort.position.lng),
+                  toLatLng(toPort.position.lat, toPort.position.lng),
+                ]}
+                pathOptions={{
+                  color: routeColor,
+                  weight: isCurrentShip ? 5 : 3,
+                  opacity: 1,
+                }}
+              />
+            );
+          });
         })}
 
         {/* 港を描画 */}

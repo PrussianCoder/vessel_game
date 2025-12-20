@@ -1,0 +1,993 @@
+.tutorial-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
+}
+
+.tutorial-modal {
+  background: linear-gradient(180deg, rgba(25, 35, 55, 0.98) 0%, rgba(15, 25, 45, 0.98) 100%);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 560px;
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.tutorial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tutorial-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #4dabf7;
+}
+
+.tutorial-modal .close-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.tutorial-modal .close-btn:hover {
+  color: white;
+}
+
+.tutorial-content {
+  padding: 20px;
+  overflow-y: auto;
+  max-height: calc(85vh - 140px);
+}
+
+.tutorial-footer {
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.step-dot:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.step-dot.active {
+  background: #4dabf7;
+  transform: scale(1.2);
+}
+
+.step-dot.completed {
+  background: #69db7c;
+}
+
+.tutorial-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.nav-btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-btn.prev {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.nav-btn.prev:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.nav-btn.prev:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.nav-btn.next {
+  background: linear-gradient(135deg, #4dabf7, #3bc9db);
+  border: none;
+  color: white;
+}
+
+.nav-btn.next:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(77, 171, 247, 0.4);
+}
+
+.nav-btn.start {
+  background: linear-gradient(135deg, #69db7c, #51cf66);
+  border: none;
+  color: white;
+  flex: 1;
+}
+
+.nav-btn.start:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(105, 219, 124, 0.4);
+}
+
+/* ===== ゲーム目標 ===== */
+.tutorial-goal {
+  text-align: center;
+}
+
+.goal-banner {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 212, 59, 0.2));
+  border: 2px solid rgba(255, 212, 59, 0.5);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.goal-icon {
+  font-size: 32px;
+}
+
+.goal-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffd43b;
+}
+
+.goal-description {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.warning-text {
+  color: #ff6b6b;
+}
+
+.city-preview {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.city-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  color: white;
+  font-size: 14px;
+}
+
+.city-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.city-dot.red { background: #ff6b6b; }
+.city-dot.blue { background: #4dabf7; }
+.city-dot.yellow { background: #ffd43b; }
+.city-dot.green { background: #69db7c; }
+
+.score-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px 20px;
+  background: rgba(255, 212, 59, 0.15);
+  border: 1px solid rgba(255, 212, 59, 0.3);
+  border-radius: 8px;
+}
+
+.score-icon {
+  font-size: 20px;
+}
+
+.score-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffd43b;
+}
+
+/* ===== 画面構成の説明 ===== */
+.screen-screenshot-container {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+}
+
+.screen-screenshot {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.layout-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.legend-icon {
+  font-size: 18px;
+  width: 28px;
+  text-align: center;
+}
+
+.legend-row strong {
+  color: #4dabf7;
+}
+
+/* ===== ステップ共通 ===== */
+.tutorial-step {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.step-visual {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.step-explanation {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.step-explanation p {
+  margin: 0 0 8px 0;
+}
+
+.step-explanation strong {
+  color: #4dabf7;
+}
+
+.tip-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(105, 219, 124, 0.15);
+  border: 1px solid rgba(105, 219, 124, 0.3);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #69db7c;
+  margin-top: 8px;
+}
+
+.tip-box.warning {
+  background: rgba(255, 212, 59, 0.15);
+  border-color: rgba(255, 212, 59, 0.3);
+  color: #ffd43b;
+}
+
+.tip-icon {
+  font-size: 16px;
+}
+
+/* ===== STEP 1: 船選択 ===== */
+.mock-ship-panel {
+  background: rgba(20, 30, 50, 0.9);
+  border-radius: 8px;
+  padding: 12px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.mock-ship-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.mock-nav-btn {
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.mock-nav-btn.active {
+  background: rgba(77, 171, 247, 0.3);
+  border-color: #4dabf7;
+  color: #4dabf7;
+}
+
+.mock-ship-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #4dabf7;
+}
+
+.mock-ship-info {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+}
+
+.ship-list-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.ship-preview-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ===== STEP 2: 貨物積載 ===== */
+.mock-cargo-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.mock-port-cargo, .mock-ship-cargo {
+  background: rgba(20, 30, 50, 0.9);
+  border-radius: 8px;
+  padding: 12px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.mock-cargo-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
+}
+
+.mock-cargo-boxes {
+  display: flex;
+  gap: 8px;
+}
+
+.mock-cargo-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+}
+
+.mock-cargo-box.red { background: rgba(255, 107, 107, 0.8); }
+.mock-cargo-box.blue { background: rgba(77, 171, 247, 0.8); }
+
+.mock-cargo-box.clickable {
+  cursor: pointer;
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+  animation: pulse-border 1.5s infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(255, 255, 255, 0.3); }
+  50% { border-color: rgba(255, 255, 255, 0.8); }
+}
+
+.cargo-count {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.mock-arrow {
+  font-size: 20px;
+  color: #69db7c;
+}
+
+.mock-cargo-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.mock-slot {
+  width: 24px;
+  height: 24px;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.mock-slot.filled.red {
+  background: #ff6b6b;
+  border: none;
+}
+
+/* ===== STEP 2: インタラクティブ貨物積載 ===== */
+.interactive-cargo-demo {
+  background: rgba(20, 30, 50, 0.95);
+  border-radius: 10px;
+  padding: 12px;
+  width: 100%;
+}
+
+.demo-ship-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.demo-nav-btn {
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  cursor: default;
+}
+
+.demo-ship-name {
+  font-size: 15px;
+  font-weight: bold;
+  color: #4dabf7;
+}
+
+.demo-ship-info {
+  text-align: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 10px;
+}
+
+.demo-cargo-section {
+  margin-bottom: 10px;
+}
+
+.demo-cargo-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.demo-cargo-grid {
+  display: grid;
+  grid-template-columns: repeat(9, 40px);
+  gap: 4px;
+  justify-content: center;
+}
+
+.demo-cargo-slot {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.demo-cargo-slot.empty {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+.demo-cargo-slot.blue {
+  background: linear-gradient(135deg, #4dabf7, #339af0);
+  box-shadow: 0 2px 4px rgba(77, 171, 247, 0.3);
+}
+
+.demo-cargo-slot.yellow {
+  background: linear-gradient(135deg, #ffd43b, #fab005);
+  box-shadow: 0 2px 4px rgba(255, 212, 59, 0.3);
+}
+
+.demo-cargo-slot.clickable {
+  cursor: pointer;
+}
+
+.demo-cargo-slot.clickable:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+}
+
+.demo-port-stock {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+}
+
+.demo-empty-message {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 8px;
+}
+
+.demo-reset-btn {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 4px;
+}
+
+.demo-reset-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.tutorial-tips {
+  margin: 8px 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.tutorial-tips li {
+  margin: 4px 0;
+}
+
+.highlight-green {
+  color: #69db7c;
+  font-weight: bold;
+}
+
+/* ===== STEP 3: 行き先選択（静的版） ===== */
+.destination-demo {
+  width: 100%;
+}
+
+.demo-map-image {
+  width: 100%;
+  height: 220px;
+  background: linear-gradient(180deg, #2e5a7a 0%, #1e4a6a 100%);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.demo-port-layout {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.demo-port-item {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.demo-port-item span {
+  font-size: 10px;
+  color: white;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.port-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+}
+
+.port-circle.gray {
+  background: #666;
+}
+
+.port-circle.red {
+  background: #ff6b6b;
+}
+
+.port-circle.blue {
+  background: #4dabf7;
+}
+
+.port-circle.yellow {
+  background: #ffd43b;
+}
+
+.port-circle.green {
+  background: #69db7c;
+}
+
+.port-circle.glow {
+  border-color: #69db7c;
+  box-shadow: 0 0 12px rgba(105, 219, 124, 0.6);
+  animation: pulse-glow 1.5s infinite;
+}
+
+.demo-ship-marker {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  font-size: 24px;
+  z-index: 3;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.demo-routes-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.demo-port-item.has-ship .port-circle {
+  border-color: #ffd43b;
+  box-shadow: 0 0 10px rgba(255, 212, 59, 0.5);
+}
+
+.demo-port-item.selected .port-circle {
+  border-color: #ff69b4;
+  box-shadow: 0 0 15px rgba(255, 105, 180, 0.7);
+}
+
+.destination-badge {
+  position: absolute;
+  top: -12px;
+  right: -16px;
+  font-size: 8px !important;
+  background: #ff69b4 !important;
+  color: white !important;
+  padding: 2px 5px !important;
+  border-radius: 3px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.route-info {
+  margin: 8px 0;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.route-example {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+}
+
+/* ===== STEP 3: 行き先選択（旧静的版） ===== */
+.mock-map {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(180deg, #2e5a7a 0%, #1e4a6a 100%);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.mock-port {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.mock-port.supply {
+  font-size: 24px;
+}
+
+.mock-port.reachable .port-marker {
+  width: 20px;
+  height: 20px;
+  background: #69db7c;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+  animation: pulse-glow 1.5s infinite;
+  box-shadow: 0 0 10px rgba(105, 219, 124, 0.6);
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(105, 219, 124, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(105, 219, 124, 0.8); }
+}
+
+.port-label {
+  font-size: 10px;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ===== STEP 4: ターン進行 ===== */
+.mock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 320px;
+  padding: 10px 16px;
+  background: rgba(20, 30, 50, 0.9);
+  border-radius: 8px;
+}
+
+.mock-turn {
+  font-size: 14px;
+  color: #4dabf7;
+  font-weight: bold;
+}
+
+.mock-header-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.mock-undo-btn {
+  padding: 8px 12px;
+  background: rgba(255, 193, 7, 0.15);
+  border: 1px solid rgba(255, 193, 7, 0.4);
+  border-radius: 6px;
+  color: #ffc107;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.mock-next-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #69db7c, #51cf66);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.mock-turn-flow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.flow-num {
+  width: 20px;
+  height: 20px;
+  background: #4dabf7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+}
+
+.flow-arrow {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+}
+
+/* ===== 在庫パネル ===== */
+.mock-inventory {
+  background: rgba(20, 30, 50, 0.9);
+  border-radius: 8px;
+  padding: 12px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.mock-inv-header {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.mock-inv-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: white;
+}
+
+.mock-inv-row.warning {
+  background: rgba(255, 212, 59, 0.15);
+}
+
+.mock-inv-row.danger {
+  background: rgba(255, 107, 107, 0.2);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.mock-bar {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mock-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+.mock-bar-fill.red { background: #ff6b6b; }
+.mock-bar-fill.blue { background: #4dabf7; }
+.mock-bar-fill.yellow { background: #ffd43b; }
+
+.consume {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.status-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status-dot.safe { background: #69db7c; }
+.status-dot.warning { background: #ffd43b; }
+.status-dot.danger { background: #ff6b6b; }
+
+/* ===== アイテム ===== */
+.mock-items {
+  display: flex;
+  gap: 12px;
+}
+
+.mock-item-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  font-size: 12px;
+  color: white;
+}
+
+.mock-item-btn span:first-child {
+  font-size: 24px;
+}
+
+.item-list {
+  margin: 8px 0 0 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.item-list li {
+  margin: 4px 0;
+}
+
+.item-list strong {
+  color: white;
+}

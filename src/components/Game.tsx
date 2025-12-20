@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { GameMap } from './GameMap';
 import { GanttChart } from './GanttChart';
 import { InfoPanel } from './InfoPanel';
-import { HelpModal } from './HelpModal';
+import { TutorialModal } from './TutorialModal';
 import { useGameState } from '../hooks/useGameState';
 import type { PortId, Ship, CargoColor, ItemType } from '../types/game';
 import './Game.css';
@@ -10,7 +10,11 @@ import './Game.css';
 // 船の操作順序
 const SHIP_ORDER = ['large', 'medium', 'small'] as const;
 
-export const Game: React.FC = () => {
+interface GameProps {
+  onReturnToStart?: () => void;
+}
+
+export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
   const {
     gameState,
     loadCargo,
@@ -222,9 +226,9 @@ export const Game: React.FC = () => {
   const getCargoColor = (color: string) => {
     switch (color) {
       case 'red': return '#ff6b6b';
-      case 'blue': return '#4dabf7';
+      case 'blue': return '#00bfff'; // 明るいシアン
       case 'yellow': return '#ffd43b';
-      case 'green': return '#69db7c';
+      case 'green': return '#7fff00'; // 黄緑（チャートリューズ）で識別しやすく
       default: return '#888';
     }
   };
@@ -386,6 +390,11 @@ export const Game: React.FC = () => {
           <button className="reset-btn" onClick={handleReset}>
             リセット
           </button>
+          {onReturnToStart && (
+            <button className="home-btn" onClick={onReturnToStart}>
+              スタートへ
+            </button>
+          )}
           <button className="help-btn" onClick={() => setShowHelp(true)}>
             ?
           </button>
@@ -588,7 +597,7 @@ export const Game: React.FC = () => {
       )}
 
       {/* ヘルプモーダル */}
-      <HelpModal isOpen={showHelp} onClose={() => setShowHelp(false)} />
+      <TutorialModal isOpen={showHelp} onClose={() => setShowHelp(false)} />
     </div>
   );
 };

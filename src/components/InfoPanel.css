@@ -1,27 +1,34 @@
 .info-panel {
-  background: rgba(20, 30, 50, 0.9);
+  background: transparent;
   border-radius: 8px;
-  padding: 10px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   height: 100%;
   overflow-y: auto;
 }
 
 .info-section {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
-  padding: 8px;
+  background: rgba(20, 30, 50, 0.9);
+  border-radius: 8px;
+  padding: 8px 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inventory-section {
+  flex: none;
 }
 
 .info-section h3 {
   color: rgba(255, 255, 255, 0.7);
   font-size: 11px;
-  margin: 0 0 6px 0;
+  margin: 0 0 4px 0;
   text-transform: uppercase;
   letter-spacing: 1px;
+  text-align: left;
 }
 
 /* ターン情報 */
@@ -86,9 +93,9 @@
 .inventory-header {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px;
-  margin-bottom: 4px;
+  gap: 4px;
+  padding: 2px 3px;
+  margin-bottom: 2px;
   font-size: 10px;
   color: rgba(255, 255, 255, 0.5);
 }
@@ -99,16 +106,17 @@
 
 .header-bar {
   flex: 1;
-  text-align: center;
+  min-width: 120px;
+  text-align: left;
 }
 
 .header-stock {
-  width: 28px;
-  text-align: right;
+  width: 32px;
+  text-align: center;
 }
 
 .header-demand {
-  width: 32px;
+  width: 36px;
   text-align: center;
 }
 
@@ -121,8 +129,8 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  margin: 2px 0;
-  padding: 3px;
+  margin: 0;
+  padding: 4px 3px;
   border-radius: 4px;
   transition: background 0.3s;
 }
@@ -175,6 +183,7 @@
 
 .inventory-bar-container {
   flex: 1;
+  min-width: 120px;
   height: 10px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 5px;
@@ -204,15 +213,15 @@
 }
 
 .inventory-value {
-  width: 28px;
-  text-align: right;
+  width: 32px;
+  text-align: center;
   font-size: 13px;
   font-weight: bold;
   color: white;
 }
 
 .inventory-demand {
-  width: 32px;
+  width: 36px;
   text-align: center;
   font-size: 12px;
   font-weight: bold;
