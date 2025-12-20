@@ -581,25 +581,28 @@
 /* ヘッダー情報 */
 .header-info {
   display: flex;
-  gap: 24px;
+  align-items: flex-start;
+  gap: 16px;
   font-size: 14px;
 }
 
-.turn-info {
-  color: #4dabf7;
+.turn-info,
+.score-info,
+.demand-level {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
   font-weight: bold;
+}
+
+.turn-info {
+  background: rgba(77, 171, 247, 0.2);
+  color: #4dabf7;
 }
 
 .score-info {
+  background: rgba(255, 212, 59, 0.2);
   color: #ffd43b;
-  font-weight: bold;
-}
-
-.demand-level {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: bold;
 }
 
 .demand-level.level-1 {

@@ -469,12 +469,6 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
                   </button>
                 </div>
               )}
-              {!plannedDestinations[currentShip.id] && reachablePorts.length > 0 && (
-                <div className="destination-hint">
-                  緑の港をクリックして行き先を設定
-                </div>
-              )}
-
               {/* 船の積荷（箱表示） */}
               <div className="ship-cargo-section">
                 <h4>船の積荷{isAtSupplyPort && currentShip.cargo.length > 0 ? '（クリックで戻す）' : ''}</h4>

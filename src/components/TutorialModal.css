@@ -217,7 +217,7 @@
 .city-dot.yellow { background: #ffd43b; }
 .city-dot.green { background: #69db7c; }
 
-.score-info {
+.tutorial-goal .score-info {
   display: flex;
   align-items: center;
   justify-content: center;
