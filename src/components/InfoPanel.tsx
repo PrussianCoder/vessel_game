@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import type { GameState, PortId } from '../types/game';
+import { getDemandForPort } from '../config/gameConfig';
 import './InfoPanel.css';
 
 interface InfoPanelProps {
@@ -17,12 +18,9 @@ export const InfoPanel: React.FC<InfoPanelProps> = ({ gameState, plannedDestinat
     return 'normal';
   };
 
-  // 消費量を取得
+  // 消費量を取得（DEMAND_TABLESから正確な値を取得）
   const getDemand = (portId: PortId): number => {
-    const highDemand = portId === 'TKO' || portId === 'MYZ';
-    if (demandLevel === 1) return highDemand ? 2 : 1;
-    if (demandLevel === 2) return highDemand ? 3 : 2;
-    return highDemand ? 4 : 3;
+    return getDemandForPort(portId, demandLevel);
   };
 
   // 入荷予定の貨物量を計算（航海中の船 + 予約された船）

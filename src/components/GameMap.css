@@ -168,7 +168,7 @@
 }
 
 .supply-stock-labels .stock-label.blue {
-  color: #4dabf7;
+  color: #00bfff; /* より明るいシアン */
 }
 
 .supply-stock-labels .stock-label.yellow {
@@ -176,7 +176,7 @@
 }
 
 .supply-stock-labels .stock-label.green {
-  color: #69db7c;
+  color: #7fff00; /* 黄緑（チャートリューズ）で識別しやすく */
 }
 
 .supply-stock-labels .supply-plus {

@@ -55,21 +55,21 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                 <span className="ship-emoji">🚢</span>
                 <div>
                   <strong>大型船</strong>
-                  <p>積載16個 / 1色のみ / 速度1</p>
+                  <p>積載24個 / 1色のみ / 速度1</p>
                 </div>
               </div>
               <div className="ship-type">
                 <span className="ship-emoji">⛵</span>
                 <div>
                   <strong>中型船</strong>
-                  <p>積載10個 / 2色まで / 速度1</p>
+                  <p>積載18個 / 2色まで / 速度2</p>
                 </div>
               </div>
               <div className="ship-type">
                 <span className="ship-emoji">🛥️</span>
                 <div>
                   <strong>小型船</strong>
-                  <p>積載8個 / 1色のみ / 速度2</p>
+                  <p>積載12個 / 1色のみ / 速度3</p>
                 </div>
               </div>
             </div>
@@ -122,9 +122,9 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
             <h3>難易度</h3>
             <p>ターン経過で需要レベルが上昇し、都市の消費量が増加します。</p>
             <ul>
-              <li><strong>Lv1（T1-10）:</strong> 消費 1-2個/ターン</li>
-              <li><strong>Lv2（T11-20）:</strong> 消費 2-3個/ターン</li>
-              <li><strong>Lv3（T21-30）:</strong> 消費 3-4個/ターン</li>
+              <li><strong>Lv1（T1-10）:</strong> 赤青-2、黄緑-1</li>
+              <li><strong>Lv2（T11-20）:</strong> 赤青-3、黄緑-2</li>
+              <li><strong>Lv3（T21-30）:</strong> 赤青-4、黄緑-3</li>
             </ul>
           </section>
         </div>

@@ -28,9 +28,9 @@ export const GanttChart: React.FC<GanttChartProps> = ({ gameState, currentShipId
   const getCargoColor = (color: string) => {
     switch (color) {
       case 'red': return '#ff6b6b';
-      case 'blue': return '#4dabf7';
+      case 'blue': return '#00bfff'; // 明るいシアン
       case 'yellow': return '#ffd43b';
-      case 'green': return '#69db7c';
+      case 'green': return '#7fff00'; // 黄緑（チャートリューズ）で識別しやすく
       default: return '#888';
     }
   };

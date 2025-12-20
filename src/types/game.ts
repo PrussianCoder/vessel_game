@@ -2,7 +2,7 @@
 export type CargoColor = 'red' | 'blue' | 'yellow' | 'green';
 
 // 港のID
-export type PortId = 'TKO' | 'SAP' | 'MYZ' | 'ISK' | 'OKN' | 'RUS' | 'KOR' | 'TAW' | 'PHL' | 'CHN' | 'GUM' | 'PLW' | 'PNG' | 'OGS' | 'VNM' | 'IDN' | 'MTR' | 'SGP';
+export type PortId = 'TKO' | 'SAP' | 'MYZ' | 'ISK' | 'OKN' | 'RUS' | 'KOR' | 'TAW' | 'PHL' | 'CHN' | 'GUM' | 'PLW' | 'PNG' | 'OGS' | 'VNM' | 'IDN' | 'MTR' | 'SGP' | 'SKH' | 'KMC' | 'AUS' | 'IND';
 
 // 船のタイプ
 export type ShipType = 'large' | 'medium' | 'small';
