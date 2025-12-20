@@ -775,3 +775,520 @@
 .cancel-item-btn:hover {
   background: rgba(255, 107, 107, 0.2);
 }
+
+/* ========================================
+   モバイル用レイアウト
+   ======================================== */
+
+/* モバイル用下部アクションバー */
+.mobile-action-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #0a0a1e;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  z-index: 501;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mobile-action-bar .ship-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.mobile-action-bar .ship-selector .ship-nav-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(77, 171, 247, 0.5);
+  border-radius: 50%;
+  background: transparent;
+  color: #4dabf7;
+  font-size: 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mobile-action-bar .ship-selector .ship-nav-btn:active {
+  background: rgba(77, 171, 247, 0.2);
+}
+
+.mobile-action-bar .ship-selector .current-ship {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mobile-action-bar .ship-selector .ship-icon {
+  font-size: 20px;
+}
+
+.mobile-action-bar .ship-selector .ship-name {
+  font-weight: bold;
+  color: #4dabf7;
+  font-size: 13px;
+}
+
+.mobile-action-bar .action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.mobile-action-bar .mobile-undo-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 193, 7, 0.5);
+  border-radius: 8px;
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+  font-size: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mobile-action-bar .mobile-undo-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.mobile-action-bar .mobile-next-turn-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #4dabf7, #3bc9db);
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(77, 171, 247, 0.3);
+  flex-shrink: 0;
+}
+
+.mobile-action-bar .mobile-next-turn-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* モバイル用下部パネル */
+.mobile-bottom-panel {
+  display: none;
+  position: fixed;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  background: #14142a;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  overflow-y: auto;
+  z-index: 500;
+  padding: 8px 12px;
+}
+
+/* モバイル用ヘッダー（コンパクト） */
+.mobile-header {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* PC用要素を非表示 */
+  .game-header {
+    display: none;
+  }
+
+  .game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .game-content {
+    display: block;
+    padding: 0;
+    margin-top: 44px;
+    /* ヘッダー44px + 下部パネル300px + アクションバー60px を引く */
+    height: calc(100vh - 44px - 300px - 60px);
+    overflow: hidden;
+  }
+
+  .right-section {
+    display: none;
+  }
+
+  /* モバイル用ヘッダー表示 */
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 150;
+    height: 44px;
+  }
+
+  .mobile-header .mobile-title {
+    font-size: 14px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #4dabf7, #69db7c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .mobile-header .mobile-stats {
+    display: flex;
+    gap: 8px;
+    font-size: 11px;
+  }
+
+  .mobile-header .mobile-stats span {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+  }
+
+  .mobile-header .stat-turn {
+    background: rgba(77, 171, 247, 0.2);
+    color: #4dabf7;
+  }
+
+  .mobile-header .stat-level {
+    background: rgba(100, 200, 100, 0.2);
+    color: #69db7c;
+  }
+
+  .mobile-header .stat-score {
+    background: rgba(255, 212, 59, 0.2);
+    color: #ffd43b;
+  }
+
+  .mobile-header-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mobile-header .mobile-help-btn,
+  .mobile-header .mobile-home-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    background: transparent;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-header .mobile-help-btn:hover,
+  .mobile-header .mobile-home-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* 地図セクションをフル表示 */
+  .map-section {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    position: relative;
+  }
+
+  .map-section .game-map {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  /* Leaflet地図のスタイル調整 */
+  .game-map .leaflet-container {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* 船パネルを非表示（タブで表示） */
+  .ship-panel-container {
+    display: none;
+  }
+
+  /* モバイル用要素を表示 */
+  .mobile-action-bar {
+    display: flex;
+  }
+
+  .mobile-bottom-panel {
+    display: block;
+    height: 300px;
+  }
+
+  /* モバイル用船パネル */
+  .mobile-ship-panel {
+    padding: 8px;
+    background: #14142a;
+  }
+
+  .mobile-ship-panel .ship-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+
+  .mobile-ship-panel .ship-nav-btn {
+    padding: 8px 16px;
+    border: 1px solid rgba(77, 171, 247, 0.5);
+    border-radius: 6px;
+    background: transparent;
+    color: #4dabf7;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .mobile-ship-panel .ship-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .mobile-ship-panel .current-ship-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+  }
+
+  .mobile-ship-panel .ship-details {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  /* モバイル用貨物グリッド */
+  .mobile-cargo-section {
+    margin-top: 8px;
+  }
+
+  .mobile-cargo-section .section-header {
+    font-size: 11px;
+    margin-bottom: 6px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: bold;
+  }
+
+  .mobile-cargo-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .mobile-cargo-grid .cargo-slot {
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .mobile-cargo-grid .cargo-slot.clickable {
+    cursor: pointer;
+  }
+
+  /* モバイル用都市在庫 */
+  .mobile-city-inventory {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .mobile-city-inventory .section-header {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+
+  .city-inventory-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  .city-inv-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    background: rgb(15, 15, 35);
+  }
+
+  .city-inv-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .city-inv-name {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 10px;
+    font-weight: bold;
+  }
+
+  .city-inv-numbers {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+  }
+
+  .city-inv-stock {
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+  }
+
+  .city-inv-incoming {
+    color: #69db7c;
+    font-size: 9px;
+  }
+
+  .city-inv-demand {
+    color: #ff6b6b;
+    font-size: 9px;
+  }
+
+  .city-inv-bar {
+    width: 100%;
+    height: 4px;
+    background: rgb(40, 40, 60);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .city-inv-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .city-inv-item.red .city-inv-bar-fill {
+    background: #ff6b6b;
+  }
+
+  .city-inv-item.blue .city-inv-bar-fill {
+    background: #4dabf7;
+  }
+
+  .city-inv-item.yellow .city-inv-bar-fill {
+    background: #ffd43b;
+  }
+
+  .city-inv-item.green .city-inv-bar-fill {
+    background: #69db7c;
+  }
+
+  /* モバイル用在庫パネル */
+  .mobile-inventory-panel {
+    padding: 8px;
+  }
+
+  .mobile-inventory-panel .city-inventory-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+  }
+
+  .mobile-inventory-panel .city-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+  }
+
+  .mobile-inventory-panel .city-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .mobile-inventory-panel .stock-bar {
+    flex: 1;
+    max-width: 120px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    margin: 0 12px;
+    overflow: hidden;
+  }
+
+  .mobile-inventory-panel .stock-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s;
+  }
+
+  .mobile-inventory-panel .stock-value {
+    font-size: 14px;
+    font-weight: bold;
+    min-width: 40px;
+    text-align: right;
+  }
+
+  .mobile-inventory-panel .stock-change {
+    font-size: 12px;
+    min-width: 30px;
+    text-align: right;
+  }
+
+  .mobile-inventory-panel .stock-change.negative {
+    color: #ff6b6b;
+  }
+
+  /* 貨物スロットの色 */
+  .cargo-slot.empty {
+    background: rgb(35, 35, 55);
+    border: 1px dashed rgb(60, 60, 80);
+  }
+
+  .cargo-slot.red {
+    background: #ff6b6b;
+  }
+
+  .cargo-slot.blue {
+    background: #00bfff;
+  }
+
+  .cargo-slot.yellow {
+    background: #ffd43b;
+  }
+
+  .cargo-slot.green {
+    background: #7fff00;
+  }
+
+  .cargo-slot.clickable {
+    cursor: pointer;
+  }
+
+  .cargo-slot.clickable:hover {
+    transform: scale(1.1);
+  }
+}

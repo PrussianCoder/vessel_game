@@ -207,3 +207,28 @@
   white-space: nowrap;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
+
+/* モバイル用地図スタイル */
+@media (max-width: 768px) {
+  .game-map {
+    border-radius: 0;
+  }
+
+  .game-map .leaflet-container {
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: auto !important;
+    max-height: none !important;
+  }
+
+  /* モバイルでは港マーカーを大きく（タッチしやすく） */
+  .leaflet-marker-icon {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  /* ツールチップを非表示（モバイルでは不要） */
+  .leaflet-tooltip {
+    display: none !important;
+  }
+}

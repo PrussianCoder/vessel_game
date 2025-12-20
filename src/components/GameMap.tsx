@@ -1,9 +1,12 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { MapContainer, TileLayer, Polyline, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import type { GameState, PortId, Ship, CargoColor } from '../types/game';
 import 'leaflet/dist/leaflet.css';
 import './GameMap.css';
+
+// モバイル判定
+const isMobile = () => window.innerWidth <= 768;
 
 interface PlannedRoute {
   shipId: string;
@@ -263,18 +266,25 @@ export const GameMap: React.FC<GameMapProps> = ({
     });
   };
 
+  // モバイル判定（初期レンダリング時）
+  const mobile = useMemo(() => isMobile(), []);
+
   return (
     <div className="game-map">
       <MapContainer
-        center={[22, 125]}
-        zoom={3.7}
+        center={mobile ? [15, 135] : [22, 125]}
+        zoom={mobile ? 3.5 : 3.7}
         zoomSnap={0.01}
         zoomDelta={0.1}
-        scrollWheelZoom={false}
-        dragging={false}
+        scrollWheelZoom={mobile}
+        dragging={mobile}
         zoomControl={false}
-        doubleClickZoom={false}
-        style={{ width: '90%', aspectRatio: '1/1', maxHeight: '85vh' }}
+        doubleClickZoom={mobile}
+        touchZoom={mobile}
+        style={mobile
+          ? { width: '100%', height: '100%' }
+          : { width: '90%', aspectRatio: '1/1', maxHeight: '85vh' }
+        }
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

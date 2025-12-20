@@ -592,6 +592,164 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
 
       {/* ヘルプモーダル */}
       <TutorialModal isOpen={showHelp} onClose={() => setShowHelp(false)} />
+
+      {/* モバイル用ヘッダー */}
+      <header className="mobile-header">
+        <span className="mobile-title">Vessel Game</span>
+        <div className="mobile-stats">
+          <span className="stat-turn">{gameState.turn}/{gameState.maxTurns}</span>
+          <span className="stat-level">Lv{gameState.demandLevel}</span>
+          <span className="stat-score">{gameState.score}pt</span>
+        </div>
+        <div className="mobile-header-buttons">
+          <button className="mobile-help-btn" onClick={() => setShowHelp(true)}>
+            ?
+          </button>
+          {onReturnToStart && (
+            <button className="mobile-home-btn" onClick={onReturnToStart}>
+              🏠
+            </button>
+          )}
+        </div>
+      </header>
+
+      {/* モバイル用下部パネル（船の積荷と在庫） */}
+      <div className="mobile-bottom-panel">
+        {currentShip && (
+          <div className="mobile-ship-panel">
+            <div className="ship-details">
+              現在地: {currentPort?.nameJp || '移動中'}
+              （積載: {currentShip.cargo.reduce((sum, c) => sum + c.quantity, 0)}/{currentShip.capacity}）
+            </div>
+            {/* 貨物表示 */}
+            <div className="mobile-cargo-section">
+              <div className="section-header">船の積荷{isAtSupplyPort ? '（タップで戻す）' : ''}</div>
+              <div className="mobile-cargo-grid">
+                {(() => {
+                  const slots: { color: CargoColor | 'empty' }[] = [];
+                  currentShip.cargo.forEach(c => {
+                    for (let i = 0; i < c.quantity; i++) {
+                      slots.push({ color: c.color });
+                    }
+                  });
+                  while (slots.length < currentShip.capacity) {
+                    slots.push({ color: 'empty' });
+                  }
+                  return slots.map((slot, i) => (
+                    <div
+                      key={i}
+                      className={`cargo-slot ${slot.color}`}
+                      onClick={() => slot.color !== 'empty' && isAtSupplyPort && returnCargo(currentShip.id, slot.color as CargoColor)}
+                    />
+                  ));
+                })()}
+              </div>
+            </div>
+            {/* 港の在庫（供給拠点の場合） */}
+            {isAtSupplyPort && currentPort && (
+              <div className="mobile-cargo-section">
+                <div className="section-header">港の在庫（タップで積む）</div>
+                <div className="mobile-cargo-grid">
+                  {(['red', 'blue', 'yellow', 'green'] as CargoColor[]).map((color) => {
+                    const stock = currentPort.cargoStock[color] || 0;
+                    return [...Array(Math.floor(stock))].map((_, i) => (
+                      <div
+                        key={`${color}-${i}`}
+                        className={`cargo-slot ${color} clickable`}
+                        onClick={() => canLoadColor(currentShip, color) && loadCargo(currentShip.id, color, 1)}
+                      />
+                    ));
+                  })}
+                </div>
+              </div>
+            )}
+            {/* 都市在庫状況 */}
+            <div className="mobile-city-inventory">
+              <div className="city-inventory-row">
+                {gameState.cityInventories.map((inv) => {
+                  const city = gameState.ports[inv.portId];
+                  const demand = inv.portId === 'TKO' || inv.portId === 'SAP'
+                    ? gameState.demandLevel + 1
+                    : gameState.demandLevel;
+                  const stockPercent = Math.min(100, (inv.stock / 30) * 100);
+                  // 入荷予定量を計算（この都市に向かっている船の該当色貨物）
+                  const incoming = gameState.ships.reduce((sum, ship) => {
+                    // 航海中でこの都市に向かっている船
+                    if (ship.status === 'sailing' && ship.sailingTo === inv.portId) {
+                      const cargoOfColor = ship.cargo.find(c => c.color === inv.color);
+                      return sum + (cargoOfColor?.quantity || 0);
+                    }
+                    // 停泊中でこの都市に行き先予約されている船
+                    if (ship.status === 'docked' && plannedDestinations[ship.id] === inv.portId) {
+                      const cargoOfColor = ship.cargo.find(c => c.color === inv.color);
+                      return sum + (cargoOfColor?.quantity || 0);
+                    }
+                    return sum;
+                  }, 0);
+                  return (
+                    <div key={inv.portId} className={`city-inv-item ${inv.color}`}>
+                      <div className="city-inv-header">
+                        <span className="city-inv-name">{city?.nameJp?.slice(0, 2)}</span>
+                        <span className="city-inv-numbers">
+                          <span className="city-inv-stock">{inv.stock}</span>
+                          {incoming > 0 && <span className="city-inv-incoming">+{incoming}</span>}
+                          <span className="city-inv-demand">-{demand}</span>
+                        </span>
+                      </div>
+                      <div className="city-inv-bar">
+                        <div
+                          className="city-inv-bar-fill"
+                          style={{ width: `${stockPercent}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* モバイル用アクションバー */}
+      <div className="mobile-action-bar">
+        <div className="ship-selector">
+          <button
+            className="ship-nav-btn"
+            onClick={() => setCurrentShipIndex((prev) => (prev - 1 + SHIP_ORDER.length) % SHIP_ORDER.length)}
+          >
+            ◀
+          </button>
+          <div className="current-ship">
+            <span className="ship-icon">
+              {currentShip?.type === 'large' ? '🚢' : currentShip?.type === 'medium' ? '⛵' : '🛥️'}
+            </span>
+            <span className="ship-name">{currentShip?.name}</span>
+          </div>
+          <button
+            className="ship-nav-btn"
+            onClick={() => setCurrentShipIndex((prev) => (prev + 1) % SHIP_ORDER.length)}
+          >
+            ▶
+          </button>
+        </div>
+        <div className="action-buttons">
+          <button
+            className="mobile-undo-btn"
+            onClick={handleUndo}
+            disabled={!canUndo}
+          >
+            ↩
+          </button>
+          <button
+            className="mobile-next-turn-btn"
+            onClick={handleNextTurn}
+            disabled={gameState.status !== 'playing'}
+          >
+            次のターン
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
