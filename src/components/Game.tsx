@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { GameMap } from './GameMap';
 import { GanttChart } from './GanttChart';
 import { InfoPanel } from './InfoPanel';
 import { TutorialModal } from './TutorialModal';
 import { useGameState } from '../hooks/useGameState';
-import type { PortId, Ship, CargoColor, ItemType } from '../types/game';
+import type { PortId, Ship, CargoColor, ItemType, GameState } from '../types/game';
 import './Game.css';
 
 // 船の操作順序
@@ -17,6 +17,7 @@ interface GameProps {
 export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
   const {
     gameState,
+    stateHistory,
     loadCargo,
     returnCargo,
     unloadCargo,
@@ -45,6 +46,72 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
   const [activeItem, setActiveItem] = useState<ItemType | null>(null);
   // ヘルプモーダル表示状態
   const [showHelp, setShowHelp] = useState(false);
+  // リプレイモード
+  const [isReplayMode, setIsReplayMode] = useState(false);
+  const [replayHistory, setReplayHistory] = useState<GameState[]>([]);
+  const [replayIndex, setReplayIndex] = useState(0);
+  const [isReplayPlaying, setIsReplayPlaying] = useState(false);
+  const replayIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // リプレイで表示するゲーム状態
+  const displayGameState = isReplayMode && replayHistory.length > 0
+    ? replayHistory[replayIndex]
+    : gameState;
+
+  // リプレイ開始
+  const startReplay = useCallback(() => {
+    // 現在のstateHistoryと最終状態をコピー
+    const fullHistory = [...stateHistory, gameState];
+    setReplayHistory(fullHistory);
+    setReplayIndex(0);
+    setIsReplayMode(true);
+    setIsReplayPlaying(false);
+  }, [stateHistory, gameState]);
+
+  // リプレイ停止
+  const stopReplay = useCallback(() => {
+    if (replayIntervalRef.current) {
+      clearInterval(replayIntervalRef.current);
+      replayIntervalRef.current = null;
+    }
+    setIsReplayMode(false);
+    setIsReplayPlaying(false);
+    setReplayHistory([]);
+    setReplayIndex(0);
+  }, []);
+
+  // リプレイ再生/一時停止
+  const toggleReplayPlay = useCallback(() => {
+    if (isReplayPlaying) {
+      if (replayIntervalRef.current) {
+        clearInterval(replayIntervalRef.current);
+        replayIntervalRef.current = null;
+      }
+      setIsReplayPlaying(false);
+    } else {
+      setIsReplayPlaying(true);
+    }
+  }, [isReplayPlaying]);
+
+  // リプレイ自動再生
+  useEffect(() => {
+    if (isReplayPlaying && isReplayMode) {
+      replayIntervalRef.current = setInterval(() => {
+        setReplayIndex(prev => {
+          if (prev >= replayHistory.length - 1) {
+            setIsReplayPlaying(false);
+            return prev;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (replayIntervalRef.current) {
+        clearInterval(replayIntervalRef.current);
+      }
+    };
+  }, [isReplayPlaying, isReplayMode, replayHistory.length]);
 
   // 現在操作中の船を取得
   const currentShip = useMemo(() => {
@@ -405,14 +472,14 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
         {/* 左側：地図 */}
         <div className="map-section">
           <GameMap
-            gameState={gameState}
-            onPortClick={handlePortClick}
-            onShipClick={handleShipClick}
-            selectedPortId={currentShip?.currentPort || null}
-            selectedShipId={currentShip?.id || null}
-            highlightedPorts={reachablePorts}
-            selectedRoute={selectedRoute}
-            plannedRoutes={plannedRoutes}
+            gameState={displayGameState}
+            onPortClick={isReplayMode ? undefined : handlePortClick}
+            onShipClick={isReplayMode ? undefined : handleShipClick}
+            selectedPortId={isReplayMode ? null : (currentShip?.currentPort || null)}
+            selectedShipId={isReplayMode ? null : (currentShip?.id || null)}
+            highlightedPorts={isReplayMode ? [] : reachablePorts}
+            selectedRoute={isReplayMode ? null : selectedRoute}
+            plannedRoutes={isReplayMode ? [] : plannedRoutes}
           />
         </div>
 
@@ -558,13 +625,13 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
 
           {/* 情報パネル */}
           <div className="info-section">
-            <InfoPanel gameState={gameState} plannedDestinations={plannedDestinations} />
+            <InfoPanel gameState={displayGameState} plannedDestinations={isReplayMode ? {} : plannedDestinations} />
           </div>
         </div>
       </div>
 
       {/* ゲーム終了オーバーレイ */}
-      {gameState.status !== 'playing' && (
+      {gameState.status !== 'playing' && !isReplayMode && (
         <div className="game-end-overlay">
           <div className={`game-end-modal ${gameState.status}`}>
             <h2>{gameState.status === 'cleared' ? 'GAME CLEAR!' : 'GAME OVER'}</h2>
@@ -587,6 +654,9 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
               <button className="retry-btn" onClick={handleReset}>
                 もう一度プレイ
               </button>
+              <button className="replay-btn" onClick={startReplay}>
+                リプレイを見る
+              </button>
               <button
                 className="tweet-btn"
                 onClick={() => {
@@ -601,6 +671,36 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
                 結果をつぶやく
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* リプレイモードUI */}
+      {isReplayMode && (
+        <div className="replay-overlay">
+          <div className="replay-controls">
+            <span className="replay-label">リプレイ</span>
+            <span className="replay-turn">ターン {displayGameState.turn}/{gameState.turn - 1}</span>
+            <button
+              className="replay-prev-btn"
+              onClick={() => setReplayIndex(prev => Math.max(0, prev - 1))}
+              disabled={replayIndex === 0}
+            >
+              ◀◀
+            </button>
+            <button className="replay-play-btn" onClick={toggleReplayPlay}>
+              {isReplayPlaying ? '⏸' : '▶'}
+            </button>
+            <button
+              className="replay-next-btn"
+              onClick={() => setReplayIndex(prev => Math.min(replayHistory.length - 1, prev + 1))}
+              disabled={replayIndex >= replayHistory.length - 1}
+            >
+              ▶▶
+            </button>
+            <button className="replay-close-btn" onClick={stopReplay}>
+              ✕ 閉じる
+            </button>
           </div>
         </div>
       )}

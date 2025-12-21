@@ -305,6 +305,105 @@
   box-shadow: 0 8px 25px rgba(29, 161, 242, 0.4);
 }
 
+.replay-btn {
+  padding: 12px 36px;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #69db7c, #40c057);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.replay-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(105, 219, 124, 0.4);
+}
+
+/* リプレイモードUI */
+.replay-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1500;
+  display: flex;
+  justify-content: center;
+}
+
+.replay-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(30, 40, 60, 0.95);
+  padding: 10px 20px;
+  border-radius: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.replay-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #69db7c;
+}
+
+.replay-turn {
+  font-size: 14px;
+  color: #4dabf7;
+  min-width: 100px;
+}
+
+.replay-prev-btn,
+.replay-next-btn,
+.replay-play-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(77, 171, 247, 0.2);
+  color: #4dabf7;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.replay-prev-btn:hover:not(:disabled),
+.replay-next-btn:hover:not(:disabled),
+.replay-play-btn:hover {
+  background: rgba(77, 171, 247, 0.4);
+}
+
+.replay-prev-btn:disabled,
+.replay-next-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.replay-play-btn {
+  background: linear-gradient(135deg, #4dabf7, #3bc9db);
+  color: white;
+}
+
+.replay-close-btn {
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 107, 107, 0.5);
+  border-radius: 20px;
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.replay-close-btn:hover {
+  background: rgba(255, 107, 107, 0.3);
+  border-color: #ff6b6b;
+}
+
 /* 船操作パネル */
 .ship-control-section {
   background: rgba(20, 30, 50, 0.9);

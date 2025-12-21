@@ -688,6 +688,7 @@ export function useGameState() {
 
   return {
     gameState,
+    stateHistory,
     loadCargo,
     returnCargo,
     unloadCargo,

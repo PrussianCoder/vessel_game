@@ -30,12 +30,12 @@ export const INITIAL_PORTS: Record<PortId, Port> = {
     cargoStock: { red: 0, blue: 0, yellow: 0, green: 0 },
     demandColor: 'yellow',
   },
-  ISK: {
-    id: 'ISK',
-    name: 'Ishikawa',
-    nameJp: '石川',
+  KYT: {
+    id: 'KYT',
+    name: 'Kyoto',
+    nameJp: '京都',
     type: 'demand',
-    position: { lat: 36.5944, lng: 136.6256 }, // 金沢港
+    position: { lat: 35.6681, lng: 135.1500 }, // 京都北部（舞鶴付近）
     cargoStock: { red: 0, blue: 0, yellow: 0, green: 0 },
     demandColor: 'green',
   },
@@ -65,7 +65,7 @@ export const INITIAL_PORTS: Record<PortId, Port> = {
     name: 'Korea',
     nameJp: '韓国',
     type: 'supply',
-    position: { lat: 35.1796, lng: 129.0756 }, // 釜山
+    position: { lat: 37.4563, lng: 126.7052 }, // 仁川
     // 赤青バラバラ
     cargoStock: { red: 1, blue: 1, yellow: 0, green: 0 },
     supplyPerTurn: { red: 0.5, blue: 0.5, yellow: 0, green: 0 },
@@ -100,13 +100,13 @@ export const INITIAL_PORTS: Record<PortId, Port> = {
     cargoStock: { red: 1, blue: 0, yellow: 0, green: 1 },
     supplyPerTurn: { red: 0.5, blue: 0, yellow: 0, green: 0.5 },
   },
-  CHN: {
-    id: 'CHN',
-    name: 'China',
-    nameJp: '上海',
+  HKG: {
+    id: 'HKG',
+    name: 'Hong Kong',
+    nameJp: '香港',
     type: 'supply',
-    position: { lat: 31.2304, lng: 121.4737 }, // 上海
-    // 黄色1（北部集中）+ 赤青バラバラ
+    position: { lat: 22.3193, lng: 114.1694 }, // 香港
+    // 赤1黄1
     cargoStock: { red: 1, blue: 0, yellow: 1, green: 0 },
     supplyPerTurn: { red: 0.5, blue: 0, yellow: 0.5, green: 0 },
   },
@@ -186,16 +186,7 @@ export const INITIAL_PORTS: Record<PortId, Port> = {
     nameJp: '樺太',
     type: 'supply',
     position: { lat: 50.0, lng: 143.0 }, // 樺太（サハリン）
-    cargoStock: { red: 0, blue: 0, yellow: 1, green: 0 },
-    supplyPerTurn: { red: 0, blue: 0, yellow: 0.5, green: 0 },
-  },
-  KMC: {
-    id: 'KMC',
-    name: 'Kamchatka',
-    nameJp: 'カムチャッカ',
-    type: 'supply',
-    position: { lat: 53.0, lng: 158.6 }, // カムチャッカ半島
-    // 黄2赤1
+    // 黄2赤1（カムチャッカ削除のため供給量を移行）
     cargoStock: { red: 1, blue: 0, yellow: 2, green: 0 },
     supplyPerTurn: { red: 0.5, blue: 0, yellow: 1, green: 0 },
   },
@@ -205,18 +196,18 @@ export const INITIAL_PORTS: Record<PortId, Port> = {
     name: 'Australia',
     nameJp: 'オーストラリア',
     type: 'supply',
-    position: { lat: -16.9186, lng: 145.7781 }, // ケアンズ（クイーンズランド）
+    position: { lat: -12.4634, lng: 130.8456 }, // ノーザンテリトリー州北部（ダーウィン）
     // 緑2青2
     cargoStock: { red: 0, blue: 2, yellow: 0, green: 2 },
     supplyPerTurn: { red: 0, blue: 1, yellow: 0, green: 1 },
   },
-  // インド
-  IND: {
-    id: 'IND',
-    name: 'India',
-    nameJp: 'インド',
+  // バングラデシュ
+  BGD: {
+    id: 'BGD',
+    name: 'Bangladesh',
+    nameJp: 'バングラデシュ',
     type: 'supply',
-    position: { lat: 19.0760, lng: 72.8777 }, // ムンバイ
+    position: { lat: 22.3569, lng: 91.7832 }, // チッタゴン港
     // 緑2青1
     cargoStock: { red: 0, blue: 1, yellow: 0, green: 2 },
     supplyPerTurn: { red: 0, blue: 0.5, yellow: 0, green: 1 },
@@ -227,11 +218,10 @@ export const INITIAL_PORTS: Record<PortId, Port> = {
 export const ROUTES: Route[] = [
   // 日本への航路（西側）
   { from: 'RUS', to: 'SAP', distance: 1 },
-  { from: 'RUS', to: 'ISK', distance: 1 },
+  { from: 'RUS', to: 'KYT', distance: 1 },
   { from: 'KOR', to: 'SAP', distance: 1 },
   { from: 'KOR', to: 'MYZ', distance: 1 },
-  { from: 'KOR', to: 'ISK', distance: 1 },
-  { from: 'CHN', to: 'MYZ', distance: 1 },
+  { from: 'KOR', to: 'KYT', distance: 1 },
   { from: 'TAW', to: 'MYZ', distance: 1 },
   { from: 'TAW', to: 'OKN', distance: 1 },
   { from: 'PHL', to: 'OKN', distance: 1 },
@@ -240,13 +230,14 @@ export const ROUTES: Route[] = [
   { from: 'TKO', to: 'OKN', distance: 1 },
   { from: 'MYZ', to: 'TKO', distance: 1 },
   { from: 'MYZ', to: 'OKN', distance: 1 },
-  { from: 'SAP', to: 'ISK', distance: 1 },
+  { from: 'SAP', to: 'KYT', distance: 1 },
   // 日本への航路（太平洋側）
   { from: 'OGS', to: 'TKO', distance: 1 },
   // 供給拠点間の航路（西側）
   { from: 'RUS', to: 'KOR', distance: 1 },
-  { from: 'KOR', to: 'CHN', distance: 1 },
-  { from: 'CHN', to: 'TAW', distance: 1 },
+  { from: 'KOR', to: 'TAW', distance: 1 },
+  { from: 'HKG', to: 'TAW', distance: 1 },
+  { from: 'HKG', to: 'VNM', distance: 1 },
   { from: 'TAW', to: 'PHL', distance: 1 },
   { from: 'TAW', to: 'VNM', distance: 1 },
   { from: 'PHL', to: 'VNM', distance: 1 },
@@ -269,14 +260,12 @@ export const ROUTES: Route[] = [
   // 樺太の航路（札幌とロシアに接続）
   { from: 'SKH', to: 'SAP', distance: 1 },
   { from: 'SKH', to: 'RUS', distance: 1 },
-  // カムチャッカの航路（樺太に接続）
-  { from: 'KMC', to: 'SKH', distance: 1 },
   // オーストラリアの航路（パプアニューギニアとインドネシアに接続）
   { from: 'AUS', to: 'PNG', distance: 1 },
   { from: 'AUS', to: 'IDN', distance: 1 },
-  // インドの航路（ベトナムとシンガポールに接続）
-  { from: 'IND', to: 'VNM', distance: 1 },
-  { from: 'IND', to: 'SGP', distance: 1 },
+  // バングラデシュの航路（ベトナムとシンガポールに接続）
+  { from: 'BGD', to: 'VNM', distance: 1 },
+  { from: 'BGD', to: 'SGP', distance: 1 },
 ];
 
 // 船の初期設定
@@ -322,30 +311,30 @@ export const INITIAL_CITY_INVENTORIES: CityInventory[] = [
   { portId: 'TKO', color: 'red', stock: 20 },
   { portId: 'SAP', color: 'blue', stock: 20 },
   { portId: 'MYZ', color: 'yellow', stock: 20 },
-  { portId: 'ISK', color: 'green', stock: 20 },
+  { portId: 'KYT', color: 'green', stock: 20 },
 ];
 
 // 需要テーブル（難易度調整版）
 // 赤・青: 需要大（減少が大きい）、黄・緑: 需要小（減少が少ない）
-// TKO=赤、SAP=青、MYZ=黄、ISK=緑
+// TKO=赤、SAP=青、MYZ=黄、KYT=緑
 export const DEMAND_TABLES: DemandTable[] = [
   {
     level: 1,
     turnRange: [1, 10],
     // 赤青: 2、黄緑: 1
-    demand: { TKO: 2, SAP: 2, MYZ: 1, ISK: 1, OKN: 0, RUS: 0, KOR: 0, TAW: 0, PHL: 0, CHN: 0, GUM: 0, PLW: 0, PNG: 0, OGS: 0, VNM: 0, IDN: 0, MTR: 0, SGP: 0, SKH: 0, KMC: 0, AUS: 0, IND: 0 },
+    demand: { TKO: 2, SAP: 2, MYZ: 1, KYT: 1, OKN: 0, RUS: 0, KOR: 0, TAW: 0, PHL: 0, HKG: 0, GUM: 0, PLW: 0, PNG: 0, OGS: 0, VNM: 0, IDN: 0, MTR: 0, SGP: 0, SKH: 0, AUS: 0, BGD: 0 },
   },
   {
     level: 2,
     turnRange: [11, 20],
     // 赤青: 3、黄緑: 2
-    demand: { TKO: 3, SAP: 3, MYZ: 2, ISK: 2, OKN: 0, RUS: 0, KOR: 0, TAW: 0, PHL: 0, CHN: 0, GUM: 0, PLW: 0, PNG: 0, OGS: 0, VNM: 0, IDN: 0, MTR: 0, SGP: 0, SKH: 0, KMC: 0, AUS: 0, IND: 0 },
+    demand: { TKO: 3, SAP: 3, MYZ: 2, KYT: 2, OKN: 0, RUS: 0, KOR: 0, TAW: 0, PHL: 0, HKG: 0, GUM: 0, PLW: 0, PNG: 0, OGS: 0, VNM: 0, IDN: 0, MTR: 0, SGP: 0, SKH: 0, AUS: 0, BGD: 0 },
   },
   {
     level: 3,
     turnRange: [21, 30],
     // 赤青: 4、黄緑: 3
-    demand: { TKO: 4, SAP: 4, MYZ: 3, ISK: 3, OKN: 0, RUS: 0, KOR: 0, TAW: 0, PHL: 0, CHN: 0, GUM: 0, PLW: 0, PNG: 0, OGS: 0, VNM: 0, IDN: 0, MTR: 0, SGP: 0, SKH: 0, KMC: 0, AUS: 0, IND: 0 },
+    demand: { TKO: 4, SAP: 4, MYZ: 3, KYT: 3, OKN: 0, RUS: 0, KOR: 0, TAW: 0, PHL: 0, HKG: 0, GUM: 0, PLW: 0, PNG: 0, OGS: 0, VNM: 0, IDN: 0, MTR: 0, SGP: 0, SKH: 0, AUS: 0, BGD: 0 },
   },
 ];
 

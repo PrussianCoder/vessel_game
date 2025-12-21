@@ -16,8 +16,8 @@ interface PlannedRoute {
 
 interface GameMapProps {
   gameState: GameState;
-  onPortClick: (portId: PortId) => void;
-  onShipClick: (ship: Ship) => void;
+  onPortClick?: (portId: PortId) => void;
+  onShipClick?: (ship: Ship) => void;
   selectedPortId: PortId | null;
   selectedShipId: string | null;
   highlightedPorts?: PortId[];
@@ -271,18 +271,28 @@ export const GameMap: React.FC<GameMapProps> = ({
   // モバイル判定（初期レンダリング時）
   const mobile = useMemo(() => isMobile(), []);
 
+  // スクロール境界（ゲームエリアを制限）
+  const maxBounds = useMemo(() => L.latLngBounds(
+    L.latLng(-50, 70),   // 南西（オーストラリア南部、インド西部）
+    L.latLng(60, 170)    // 北東（樺太北部、太平洋）
+  ), []);
+
   return (
     <div className="game-map">
       <MapContainer
-        center={mobile ? [15, 135] : [22, 125]}
-        zoom={mobile ? 3.5 : 3.7}
-        zoomSnap={0.01}
-        zoomDelta={0.1}
-        scrollWheelZoom={mobile}
-        dragging={mobile}
+        center={mobile ? [5, 125] : [22, 125]}
+        zoom={mobile ? 3.3 : 4.0}
+        zoomSnap={0.1}
+        zoomDelta={0.5}
+        scrollWheelZoom={true}
+        dragging={true}
         zoomControl={false}
-        doubleClickZoom={mobile}
-        touchZoom={mobile}
+        doubleClickZoom={true}
+        touchZoom={true}
+        minZoom={2.5}
+        maxZoom={6}
+        maxBounds={maxBounds}
+        maxBoundsViscosity={1.0}
         style={mobile
           ? { width: '100%', height: '100%' }
           : { width: '90%', aspectRatio: '1/1', maxHeight: '85vh' }
@@ -305,9 +315,9 @@ export const GameMap: React.FC<GameMapProps> = ({
               key={idx}
               positions={[fromLatLngPos, toLatLngPos]}
               pathOptions={{
-                color: 'rgba(255, 255, 255, 0.3)',
-                weight: 1,
-                dashArray: '4, 4',
+                color: 'rgba(255, 255, 255, 0.6)',
+                weight: 2,
+                dashArray: '6, 6',
               }}
             />
           );
@@ -363,7 +373,7 @@ export const GameMap: React.FC<GameMapProps> = ({
               position={latLng}
               icon={icon}
               eventHandlers={{
-                click: () => onPortClick(port.id),
+                click: () => onPortClick?.(port.id),
                 mouseover: () => handlePortHover(port.id),
                 mouseout: () => handlePortHover(null),
               }}
@@ -409,9 +419,9 @@ export const GameMap: React.FC<GameMapProps> = ({
                   if (ship.status === 'docked') {
                     // 到達可能な港にいる船をクリックした場合は、その港への移動を優先
                     if (isDestination && shipPortId) {
-                      onPortClick(shipPortId);
+                      onPortClick?.(shipPortId);
                     } else {
-                      onShipClick(ship);
+                      onShipClick?.(ship);
                     }
                   }
                 },
