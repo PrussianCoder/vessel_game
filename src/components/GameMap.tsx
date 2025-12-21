@@ -157,7 +157,8 @@ export const GameMap: React.FC<GameMapProps> = ({
     const maxStock = 25; // 最大在庫を想定
     const fillPercent = Math.min(100, (stock / maxStock) * 100);
     const color = getCargoColor(demandColor);
-    const size = isHighlighted ? 36 : isSelected ? 32 : 28;
+    const baseSize = mobile ? 20 : 28;
+    const size = isHighlighted ? baseSize + 8 : isSelected ? baseSize + 4 : baseSize;
     const strokeWidth = isHighlighted ? 4 : isSelected ? 3 : 2;
     // ハイライト色を現在の船の色にする
     const strokeColor = isHighlighted ? currentShipHighlightColor : isSelected ? '#fff' : color;
@@ -192,7 +193,8 @@ export const GameMap: React.FC<GameMapProps> = ({
 
   // 供給拠点のアイコン（灰色の丸 + 横に在庫表示）
   const createSupplyPortIcon = (port: typeof ports[PortId], isSelected: boolean, isHighlighted: boolean) => {
-    const size = isHighlighted ? 32 : isSelected ? 28 : 24;
+    const baseSize = mobile ? 18 : 24;
+    const size = isHighlighted ? baseSize + 8 : isSelected ? baseSize + 4 : baseSize;
     const strokeWidth = isHighlighted ? 4 : isSelected ? 3 : 2;
     // ハイライト色を現在の船の色にする
     const strokeColor = isHighlighted ? currentShipHighlightColor : isSelected ? '#fff' : '#666';

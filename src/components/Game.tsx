@@ -583,9 +583,24 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
                 <span className="stat-value">{gameState.score}</span>
               </div>
             </div>
-            <button className="retry-btn" onClick={handleReset}>
-              もう一度プレイ
-            </button>
+            <div className="end-buttons">
+              <button className="retry-btn" onClick={handleReset}>
+                もう一度プレイ
+              </button>
+              <button
+                className="tweet-btn"
+                onClick={() => {
+                  const text = `Vessel Gameで${gameState.turn - 1}ターン生き残り、${gameState.score}点を獲得しました🚢\n\n#VesselGame`;
+                  const url = 'https://vessel-game.vercel.app';
+                  window.open(
+                    `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+                    '_blank'
+                  );
+                }}
+              >
+                結果をつぶやく
+              </button>
+            </div>
           </div>
         </div>
       )}

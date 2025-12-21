@@ -263,6 +263,13 @@
   color: #ffd43b;
 }
 
+.end-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
 .retry-btn {
   padding: 14px 48px;
   border: none;
@@ -278,6 +285,24 @@
 .retry-btn:hover {
   transform: scale(1.05);
   box-shadow: 0 8px 25px rgba(77, 171, 247, 0.4);
+}
+
+.tweet-btn {
+  padding: 12px 36px;
+  border: none;
+  border-radius: 30px;
+  background: #1da1f2;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tweet-btn:hover {
+  transform: scale(1.05);
+  background: #0d8ddb;
+  box-shadow: 0 8px 25px rgba(29, 161, 242, 0.4);
 }
 
 /* 船操作パネル */
@@ -914,8 +939,8 @@
     display: block;
     padding: 0;
     margin-top: 44px;
-    /* ヘッダー44px + 下部パネル300px + アクションバー60px を引く */
-    height: calc(100vh - 44px - 300px - 60px);
+    /* ヘッダー44px + 下部パネル200px + アクションバー60px を引く */
+    height: calc(100vh - 44px - 200px - 60px);
     overflow: hidden;
   }
 
@@ -1036,7 +1061,7 @@
 
   .mobile-bottom-panel {
     display: block;
-    height: 300px;
+    height: 200px;
   }
 
   /* モバイル用船パネル */
@@ -1095,14 +1120,31 @@
 
   .mobile-cargo-grid {
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    flex-wrap: nowrap;
+    gap: 4px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mobile-cargo-grid::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .mobile-cargo-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+  }
+
+  .mobile-cargo-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
   }
 
   .mobile-cargo-grid .cargo-slot {
-    width: 24px;
-    height: 24px;
-    border-radius: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 2px;
     flex-shrink: 0;
   }
 
@@ -1112,28 +1154,28 @@
 
   /* モバイル用都市在庫 */
   .mobile-city-inventory {
-    margin-top: 8px;
-    padding-top: 8px;
+    margin-top: 6px;
+    padding-top: 6px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .mobile-city-inventory .section-header {
-    font-size: 10px;
-    margin-bottom: 4px;
+    font-size: 9px;
+    margin-bottom: 3px;
   }
 
   .city-inventory-row {
     display: flex;
-    gap: 6px;
+    gap: 4px;
   }
 
   .city-inv-item {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    padding: 4px 6px;
-    border-radius: 4px;
+    gap: 2px;
+    padding: 3px 5px;
+    border-radius: 3px;
     background: rgb(15, 15, 35);
   }
 
@@ -1145,7 +1187,7 @@
 
   .city-inv-name {
     color: rgba(255, 255, 255, 0.8);
-    font-size: 10px;
+    font-size: 9px;
     font-weight: bold;
   }
 
@@ -1158,22 +1200,22 @@
   .city-inv-stock {
     color: white;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .city-inv-incoming {
     color: #69db7c;
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .city-inv-demand {
     color: #ff6b6b;
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .city-inv-bar {
     width: 100%;
-    height: 4px;
+    height: 3px;
     background: rgb(40, 40, 60);
     border-radius: 2px;
     overflow: hidden;
