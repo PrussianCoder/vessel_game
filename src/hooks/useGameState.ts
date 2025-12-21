@@ -5,7 +5,6 @@ import type {
   PortId,
   CargoColor,
   GameLogEntry,
-  GameItem,
 } from '../types/game';
 import {
   INITIAL_PORTS,
@@ -22,13 +21,6 @@ function deepCopy<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
 }
 
-// 初期アイテム
-const INITIAL_ITEMS: GameItem[] = [
-  { id: 'supplyBoost', name: '緊急生産', description: '供給拠点1つの在庫を満タンに', used: false },
-  { id: 'demandFreeze', name: '特別休日', description: '1ターン需要消費を停止', used: false },
-  { id: 'teleport', name: '瞬間移動', description: '船1隻を任意の港へ移動', used: false },
-];
-
 // 初期ゲーム状態を生成
 function createInitialGameState(): GameState {
   return {
@@ -42,8 +34,6 @@ function createInitialGameState(): GameState {
     routes: deepCopy(ROUTES),
     logs: [{ turn: 0, message: 'ゲーム開始！30ターン生き残れ！', type: 'info' }],
     score: 0,
-    items: deepCopy(INITIAL_ITEMS),
-    demandFrozenThisTurn: false,
   };
 }
 
@@ -426,47 +416,36 @@ export function useGameState() {
         }
       }
 
-      // 2. 需要消費フェーズ（demandFrozenThisTurnがtrueなら消費しない）
+      // 2. 需要消費フェーズ
       // 入荷後に消費を行うので、在庫+入荷-消費が負になった場合のみゲームオーバー
-      if (!prev.demandFrozenThisTurn) {
-        for (const inv of newState.cityInventories) {
-          const demand = getDemandForTurn(prev.turn, inv.portId);
-          inv.stock -= demand;
+      for (const inv of newState.cityInventories) {
+        const demand = getDemandForTurn(prev.turn, inv.portId);
+        inv.stock -= demand;
 
-          if (inv.stock < 0) {
-            // ゲームオーバー
-            const port = newState.ports[inv.portId];
-            newLogs.push({
-              turn: prev.turn,
-              message: `${port.nameJp}の在庫が枯渇しました！ゲームオーバー`,
-              type: 'danger',
-            });
-            return {
-              ...newState,
-              status: 'gameover',
-              logs: [...newState.logs, ...newLogs],
-            };
-          }
-
-          if (inv.stock <= 5) {
-            const port = newState.ports[inv.portId];
-            newLogs.push({
-              turn: prev.turn,
-              message: `警告: ${port.nameJp}の在庫が残り${inv.stock}です！`,
-              type: 'warning',
-            });
-          }
+        if (inv.stock < 0) {
+          // ゲームオーバー
+          const port = newState.ports[inv.portId];
+          newLogs.push({
+            turn: prev.turn,
+            message: `${port.nameJp}の在庫が枯渇しました！ゲームオーバー`,
+            type: 'danger',
+          });
+          return {
+            ...newState,
+            status: 'gameover',
+            logs: [...newState.logs, ...newLogs],
+          };
         }
-      } else {
-        // 消費抑制アイテム使用中
-        newLogs.push({
-          turn: prev.turn,
-          message: '消費抑制により需要消費が停止しました',
-          type: 'success',
-        });
+
+        if (inv.stock <= 5) {
+          const port = newState.ports[inv.portId];
+          newLogs.push({
+            turn: prev.turn,
+            message: `警告: ${port.nameJp}の在庫が残り${inv.stock}です！`,
+            type: 'warning',
+          });
+        }
       }
-      // demandFrozenThisTurnをリセット
-      newState.demandFrozenThisTurn = false;
 
       // 3. 供給拠点の在庫生成フェーズ（各色の在庫上限は10）
       const SUPPLY_STOCK_LIMIT = 10;
@@ -571,122 +550,6 @@ export function useGameState() {
     return currentColors.size < ship.maxColors;
   }, []);
 
-  // アイテム: 補給船団（供給拠点の在庫を満タンに）
-  const useSupplyBoost = useCallback((portId: PortId): boolean => {
-    let success = false;
-    setGameState((prev) => {
-      const item = prev.items.find((i) => i.id === 'supplyBoost');
-      if (!item || item.used) return prev;
-
-      const port = prev.ports[portId];
-      if (port.type !== 'supply') return prev;
-
-      const SUPPLY_STOCK_LIMIT = 10;
-      const newPorts = deepCopy(prev.ports);
-      for (const color of ['red', 'blue', 'yellow', 'green'] as CargoColor[]) {
-        if (port.supplyPerTurn && port.supplyPerTurn[color] > 0) {
-          newPorts[portId].cargoStock[color] = SUPPLY_STOCK_LIMIT;
-        }
-      }
-
-      const newItems = prev.items.map((i) =>
-        i.id === 'supplyBoost' ? { ...i, used: true } : i
-      );
-
-      success = true;
-      return {
-        ...prev,
-        ports: newPorts,
-        items: newItems,
-        logs: [
-          ...prev.logs,
-          {
-            turn: prev.turn,
-            message: `補給船団により${port.nameJp}の在庫が満タンになりました`,
-            type: 'success',
-          },
-        ],
-      };
-    });
-    return success;
-  }, []);
-
-  // アイテム: 消費抑制（1ターン需要消費を止める）
-  const useDemandFreeze = useCallback((): boolean => {
-    let success = false;
-    setGameState((prev) => {
-      const item = prev.items.find((i) => i.id === 'demandFreeze');
-      if (!item || item.used) return prev;
-
-      const newItems = prev.items.map((i) =>
-        i.id === 'demandFreeze' ? { ...i, used: true } : i
-      );
-
-      success = true;
-      return {
-        ...prev,
-        items: newItems,
-        demandFrozenThisTurn: true,
-        logs: [
-          ...prev.logs,
-          {
-            turn: prev.turn,
-            message: '消費抑制を発動！次のターン需要消費が停止します',
-            type: 'success',
-          },
-        ],
-      };
-    });
-    return success;
-  }, []);
-
-  // アイテム: 緊急輸送（船を任意の港へ瞬間移動）
-  const useTeleport = useCallback((shipId: string, destPortId: PortId): boolean => {
-    let success = false;
-    setGameState((prev) => {
-      const item = prev.items.find((i) => i.id === 'teleport');
-      if (!item || item.used) return prev;
-
-      const ship = prev.ships.find((s) => s.id === shipId);
-      if (!ship) return prev;
-
-      const destPort = prev.ports[destPortId];
-
-      const newShips = prev.ships.map((s) => {
-        if (s.id !== shipId) return s;
-        return {
-          ...s,
-          status: 'docked' as const,
-          currentPort: destPortId,
-          sailingFrom: undefined,
-          sailingTo: undefined,
-          remainingTurns: undefined,
-          totalTurns: undefined,
-        };
-      });
-
-      const newItems = prev.items.map((i) =>
-        i.id === 'teleport' ? { ...i, used: true } : i
-      );
-
-      success = true;
-      return {
-        ...prev,
-        ships: newShips,
-        items: newItems,
-        logs: [
-          ...prev.logs,
-          {
-            turn: prev.turn,
-            message: `緊急輸送により${ship.name}が${destPort.nameJp}へ移動しました`,
-            type: 'success',
-          },
-        ],
-      };
-    });
-    return success;
-  }, []);
-
   return {
     gameState,
     stateHistory,
@@ -703,8 +566,5 @@ export function useGameState() {
     getShipRemainingCapacity,
     canLoadColor,
     addLog,
-    useSupplyBoost,
-    useDemandFreeze,
-    useTeleport,
   };
 }

@@ -76,17 +76,6 @@ export interface DemandTable {
 // ゲームの状態
 export type GameStatus = 'playing' | 'gameover' | 'cleared';
 
-// アイテムの種類
-export type ItemType = 'supplyBoost' | 'demandFreeze' | 'teleport';
-
-// アイテムの情報
-export interface GameItem {
-  id: ItemType;
-  name: string;
-  description: string;
-  used: boolean;
-}
-
 // ゲームログのエントリ
 export interface GameLogEntry {
   turn: number;
@@ -106,8 +95,6 @@ export interface GameState {
   routes: Route[];
   logs: GameLogEntry[];
   score: number;
-  items: GameItem[];
-  demandFrozenThisTurn: boolean; // 今ターン需要消費を停止するか
 }
 
 // プレイヤーの行動

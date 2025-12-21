@@ -4,7 +4,7 @@ import { GanttChart } from './GanttChart';
 import { InfoPanel } from './InfoPanel';
 import { TutorialModal } from './TutorialModal';
 import { useGameState } from '../hooks/useGameState';
-import type { PortId, Ship, CargoColor, ItemType, GameState } from '../types/game';
+import type { PortId, Ship, CargoColor, GameState } from '../types/game';
 import './Game.css';
 
 // 船の操作順序
@@ -29,9 +29,6 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
     getAdjacentPorts,
     getShipRemainingCapacity,
     canLoadColor,
-    useSupplyBoost,
-    useDemandFreeze,
-    useTeleport,
   } = useGameState();
 
   // 現在操作中の船のインデックス（大型→中型→小型の順）
@@ -42,8 +39,6 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
   const [, setDestinationsHistory] = useState<Record<string, PortId>[]>([]);
   // ダブルクリック防止用のフラグ
   const isProcessingRef = useRef(false);
-  // アイテム選択モード
-  const [activeItem, setActiveItem] = useState<ItemType | null>(null);
   // ヘルプモーダル表示状態
   const [showHelp, setShowHelp] = useState(false);
   // リプレイモード
@@ -129,26 +124,6 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
 
   // 港クリック時の処理（行き先を予約）
   const handlePortClick = useCallback((portId: PortId) => {
-    // アイテム使用モードの場合
-    if (activeItem === 'supplyBoost') {
-      const port = gameState.ports[portId];
-      if (port.type === 'supply') {
-        useSupplyBoost(portId);
-        setActiveItem(null);
-      }
-      return;
-    }
-    if (activeItem === 'teleport' && currentShip) {
-      useTeleport(currentShip.id, portId);
-      setActiveItem(null);
-      // テレポート後は予約をクリア
-      setPlannedDestinations(prev => {
-        const { [currentShip.id]: _, ...rest } = prev;
-        return rest;
-      });
-      return;
-    }
-
     // 到達可能な港をクリックした場合は行き先を予約（即出港ではなく次ターンで出港）
     if (currentShip && currentShip.status === 'docked' && reachablePorts.includes(portId)) {
       setPlannedDestinations(prev => {
@@ -161,7 +136,7 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
         return { ...prev, [currentShip.id]: portId };
       });
     }
-  }, [currentShip, reachablePorts, activeItem, gameState.ports, useSupplyBoost, useTeleport]);
+  }, [currentShip, reachablePorts]);
 
 
   // 船クリック時の処理
@@ -242,7 +217,6 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
     setPlannedDestinations({});
     nextTurn();
     setCurrentShipIndex(0);
-    setActiveItem(null);
   }, [nextTurn, plannedDestinations, gameState.ships, sail]);
 
   // 前のターンに戻る
@@ -259,7 +233,6 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
         return prevHistory;
       });
       setCurrentShipIndex(0);
-      setActiveItem(null);
     }
   }, [undoTurn]);
 
@@ -269,22 +242,7 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
     setPlannedDestinations({});
     setDestinationsHistory([]);
     setCurrentShipIndex(0);
-    setActiveItem(null);
   }, [resetGame]);
-
-  // アイテム使用ハンドラ
-  const handleItemClick = useCallback((itemId: ItemType) => {
-    const item = gameState.items.find((i) => i.id === itemId);
-    if (!item || item.used) return;
-
-    if (itemId === 'demandFreeze') {
-      // 消費抑制は即時発動
-      useDemandFreeze();
-    } else {
-      // 補給船団・緊急輸送は対象選択モードへ
-      setActiveItem(itemId);
-    }
-  }, [gameState.items, useDemandFreeze]);
 
   // 現在の港の情報
   const currentPort = currentShip?.currentPort ? gameState.ports[currentShip.currentPort] : null;
@@ -481,35 +439,6 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
             selectedRoute={isReplayMode ? null : selectedRoute}
             plannedRoutes={isReplayMode ? [] : plannedRoutes}
           />
-          {/* アイテム選択中のガイドオーバーレイ */}
-          {activeItem && (
-            <div className="item-guide-overlay">
-              <div className="item-guide-content">
-                <div className="item-guide-icon">
-                  {activeItem === 'supplyBoost' && '📦'}
-                  {activeItem === 'demandFreeze' && '❄️'}
-                  {activeItem === 'teleport' && '⚡'}
-                </div>
-                <div className="item-guide-text">
-                  {activeItem === 'supplyBoost' && (
-                    <>
-                      <div className="guide-title">緊急生産</div>
-                      <div className="guide-desc">灰色の供給拠点をクリックして在庫を満タンにします</div>
-                    </>
-                  )}
-                  {activeItem === 'teleport' && (
-                    <>
-                      <div className="guide-title">瞬間移動</div>
-                      <div className="guide-desc">任意の港をクリックして船を瞬時に移動させます</div>
-                    </>
-                  )}
-                </div>
-                <button className="item-guide-cancel" onClick={() => setActiveItem(null)}>
-                  キャンセル
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* 右側：情報パネル */}
@@ -620,37 +549,6 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
               </div>
             </div>
           )}
-
-          {/* アイテムパネル */}
-          <div className="items-section">
-            <h4>アイテム</h4>
-            <div className="items-list">
-              {gameState.items.map((item) => (
-                <button
-                  key={item.id}
-                  className={`item-btn ${item.used ? 'used' : ''} ${activeItem === item.id ? 'active' : ''}`}
-                  onClick={() => handleItemClick(item.id)}
-                  disabled={item.used || gameState.status !== 'playing'}
-                  title={item.description}
-                >
-                  <span className="item-icon">
-                    {item.id === 'supplyBoost' && '📦'}
-                    {item.id === 'demandFreeze' && '❄️'}
-                    {item.id === 'teleport' && '⚡'}
-                  </span>
-                  <span className="item-name">{item.name}</span>
-                  {item.used && <span className="item-used">使用済</span>}
-                </button>
-              ))}
-            </div>
-            {activeItem && (
-              <div className="item-hint">
-                {activeItem === 'supplyBoost' && '供給拠点（灰色の港）をクリックして在庫を満タンにします'}
-                {activeItem === 'teleport' && '任意の港をクリックして船を移動します'}
-                <button className="cancel-item-btn" onClick={() => setActiveItem(null)}>キャンセル</button>
-              </div>
-            )}
-          </div>
 
           {/* 情報パネル */}
           <div className="info-section">
@@ -928,34 +826,6 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
           </button>
         </div>
       </div>
-
-      {/* モバイル用アイテムボタン（地図右側） */}
-      <div className="mobile-item-buttons">
-        {gameState.items.map((item) => (
-          <button
-            key={item.id}
-            className={`mobile-item-btn ${item.used ? 'used' : ''} ${activeItem === item.id ? 'active' : ''}`}
-            onClick={() => handleItemClick(item.id)}
-            disabled={item.used || gameState.status !== 'playing'}
-            title={item.description}
-          >
-            {item.id === 'supplyBoost' && '📦'}
-            {item.id === 'demandFreeze' && '❄️'}
-            {item.id === 'teleport' && '⚡'}
-          </button>
-        ))}
-      </div>
-
-      {/* モバイル用アイテム選択中ヒント */}
-      {activeItem && (
-        <div className="mobile-item-hint">
-          <span className="hint-text">
-            {activeItem === 'supplyBoost' && '供給拠点をタップして在庫を満タンに'}
-            {activeItem === 'teleport' && '任意の港をタップして船を移動'}
-          </span>
-          <button className="hint-cancel-btn" onClick={() => setActiveItem(null)}>✕</button>
-        </div>
-      )}
     </div>
   );
 };
