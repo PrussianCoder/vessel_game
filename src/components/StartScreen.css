@@ -8,14 +8,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .start-content {
   text-align: center;
   z-index: 10;
   padding: 40px;
-  padding-bottom: 120px;
+  padding-bottom: 80px;
+  max-width: 100%;
 }
 
 /* タイトルセクション */
@@ -223,25 +225,95 @@
 
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
+  .start-screen {
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+
+  .start-content {
+    padding: 16px;
+    padding-bottom: 60px;
+  }
+
+  .title-section {
+    margin-bottom: 16px;
+  }
+
   .game-title {
-    font-size: 2.5rem;
+    font-size: 2rem;
+    gap: 10px;
   }
 
   .title-icon {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
 
   .game-subtitle {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     letter-spacing: 2px;
+    margin-top: 4px;
+  }
+
+  .description-section {
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .description-section p {
+    margin: 2px 0;
+  }
+
+  .button-section {
+    gap: 12px;
+    margin-bottom: 24px;
   }
 
   .start-button {
-    padding: 14px 36px;
-    font-size: 1.2rem;
+    padding: 12px 32px;
+    font-size: 1.1rem;
+    gap: 8px;
+  }
+
+  .guide-button {
+    padding: 10px 24px;
+    font-size: 0.95rem;
+  }
+
+  .info-section {
+    gap: 12px;
+  }
+
+  .info-card {
+    padding: 12px 20px;
+  }
+
+  .info-header {
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+  }
+
+  .info-card p {
+    font-size: 1rem;
+  }
+
+  .info-detail {
+    font-size: 0.8rem !important;
   }
 
   .ship-preview {
-    gap: 16px;
+    gap: 12px;
+  }
+
+  .ship-item {
+    font-size: 0.8rem;
+  }
+
+  .ship-item .ship-emoji {
+    font-size: 1.6rem;
+  }
+
+  .background-decoration {
+    height: 120px;
   }
 }
