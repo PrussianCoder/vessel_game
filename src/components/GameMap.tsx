@@ -42,7 +42,7 @@ const PortTooltip: React.FC<{
       className="port-tooltip"
       style={{
         left: `${point.x}px`,
-        top: `${point.y - 45}px`,
+        top: `${point.y + 20}px`,
       }}
     >
       {port.nameJp}
