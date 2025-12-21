@@ -193,7 +193,7 @@ export const GameMap: React.FC<GameMapProps> = ({
 
   // 供給拠点のアイコン（灰色の丸 + 横に在庫表示）
   const createSupplyPortIcon = (port: typeof ports[PortId], isSelected: boolean, isHighlighted: boolean) => {
-    const baseSize = mobile ? 18 : 24;
+    const baseSize = mobile ? 28 : 24;
     const size = isHighlighted ? baseSize + 8 : isSelected ? baseSize + 4 : baseSize;
     const strokeWidth = isHighlighted ? 4 : isSelected ? 3 : 2;
     // ハイライト色を現在の船の色にする
@@ -208,19 +208,20 @@ export const GameMap: React.FC<GameMapProps> = ({
     // グロー効果も船の色に
     const glowStyle = isHighlighted ? `filter: drop-shadow(0 0 6px ${currentShipHighlightColor});` : '';
 
-    // モバイル版は縦配置、PC版は横配置
+    // 色ごとの在庫テキストを生成（モバイル用）
+    const stockTexts: string[] = [];
+    if (redStock > 0) stockTexts.push(`<tspan fill="#ff6b6b">${redStock}</tspan>`);
+    if (blueStock > 0) stockTexts.push(`<tspan fill="#00bfff">${blueStock}</tspan>`);
+    if (yellowStock > 0) stockTexts.push(`<tspan fill="#ffd43b">${yellowStock}</tspan>`);
+    if (greenStock > 0) stockTexts.push(`<tspan fill="#7fff00">${greenStock}</tspan>`);
+    const stockText = stockTexts.join('<tspan fill="white"> </tspan>');
+
+    // モバイル版は円の中に色別在庫数を表示、PC版は横に詳細表示
     const html = mobile ? `
-      <div class="supply-port-marker vertical ${isHighlighted ? 'highlighted' : ''}" style="${glowStyle}">
-        <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-          <circle cx="${size/2}" cy="${size/2}" r="${(size - strokeWidth) / 2}" fill="#666" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        </svg>
-        <div class="supply-stock-labels">
-          ${redStock > 0 ? `<span class="stock-label red">${redStock}</span>` : ''}
-          ${blueStock > 0 ? `<span class="stock-label blue">${blueStock}</span>` : ''}
-          ${yellowStock > 0 ? `<span class="stock-label yellow">${yellowStock}</span>` : ''}
-          ${greenStock > 0 ? `<span class="stock-label green">${greenStock}</span>` : ''}
-        </div>
-      </div>
+      <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="${glowStyle}">
+        <circle cx="${size/2}" cy="${size/2}" r="${(size - strokeWidth) / 2}" fill="#444" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        <text x="${size/2}" y="${size/2 + 3}" text-anchor="middle" font-size="8" font-weight="bold">${stockText}</text>
+      </svg>
     ` : `
       <div class="supply-port-marker ${isHighlighted ? 'highlighted' : ''}" style="${glowStyle}">
         <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
@@ -235,17 +236,15 @@ export const GameMap: React.FC<GameMapProps> = ({
       </div>
     `;
 
-    // モバイル版は縦に配置するため高さを増やす
+    // モバイル版はシンプルな円のみ
     const iconWidth = mobile ? size : size + 60;
-    const iconHeight = mobile ? size + 20 : size;
-    const anchorX = size / 2;
-    const anchorY = mobile ? size / 2 : size / 2;
+    const iconHeight = size;
 
     return L.divIcon({
       className: `supply-port-icon ${isHighlighted ? 'highlighted' : ''}`,
       html: html,
       iconSize: [iconWidth, iconHeight],
-      iconAnchor: [anchorX, anchorY],
+      iconAnchor: [size / 2, size / 2],
     });
   };
 
