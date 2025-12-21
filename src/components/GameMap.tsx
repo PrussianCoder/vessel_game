@@ -299,7 +299,7 @@ export const GameMap: React.FC<GameMapProps> = ({
     <div className="game-map">
       <MapContainer
         center={mobile ? [5, 125] : [22, 125]}
-        zoom={mobile ? 3.1 : 4.0}
+        zoom={mobile ? 3.0 : 4.0}
         zoomSnap={0.1}
         zoomDelta={0.5}
         scrollWheelZoom={true}

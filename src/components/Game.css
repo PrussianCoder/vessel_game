@@ -1199,20 +1199,20 @@
   }
 
   .mobile-ship-panel .ship-details {
-    font-size: 12px;
+    font-size: 10px;
     color: rgba(255, 255, 255, 0.7);
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
 
   /* モバイル用貨物グリッド */
   .mobile-cargo-section {
-    margin-top: 8px;
+    margin-top: 6px;
   }
 
   .mobile-cargo-section .section-header {
-    font-size: 11px;
-    margin-bottom: 6px;
+    font-size: 9px;
+    margin-bottom: 4px;
     color: rgba(255, 255, 255, 0.7);
     font-weight: bold;
   }
