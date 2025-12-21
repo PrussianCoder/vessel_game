@@ -12,6 +12,7 @@ import {
   INITIAL_CITY_INVENTORIES,
   ROUTES,
   GAME_CONFIG,
+  SUPPLY_STOCK_LIMITS,
   getDemandLevel,
   getDemandForTurn,
 } from '../config/gameConfig';
@@ -447,15 +448,15 @@ export function useGameState() {
         }
       }
 
-      // 3. 供給拠点の在庫生成フェーズ（各色の在庫上限は10）
-      const SUPPLY_STOCK_LIMIT = 10;
+      // 3. 供給拠点の在庫生成フェーズ（拠点ごとの在庫上限を適用）
       for (const portId of Object.keys(newState.ports) as PortId[]) {
         const port = newState.ports[portId];
         if (port.type === 'supply' && port.supplyPerTurn) {
+          const stockLimit = SUPPLY_STOCK_LIMITS[portId] ?? 10;
           for (const color of ['red', 'blue', 'yellow', 'green'] as CargoColor[]) {
             port.cargoStock[color] = Math.min(
               port.cargoStock[color] + port.supplyPerTurn[color],
-              SUPPLY_STOCK_LIMIT
+              stockLimit
             );
           }
         }

@@ -277,7 +277,7 @@ export const INITIAL_SHIPS: Ship[] = [
     name: '大型船',
     capacity: 24, // 積載量24
     speed: 1, // 1ターンに1エッジ移動（最も遅い）
-    maxColors: 1, // 1色のみ
+    maxColors: 2, // 2色積載可能
     status: 'docked',
     currentPort: 'TKO', // 東京からスタート
     cargo: [],
@@ -342,6 +342,35 @@ export const DEMAND_TABLES: DemandTable[] = [
 export const GAME_CONFIG = {
   maxTurns: 30,
   demandLevelUpTurns: [11, 21], // 需要レベルが上がるターン
+};
+
+// 供給拠点の在庫上限（色ごと）
+export const SUPPLY_STOCK_LIMITS: Record<PortId, number> = {
+  // 需要拠点（上限なし）
+  TKO: Infinity,
+  SAP: Infinity,
+  MYZ: Infinity,
+  KYT: Infinity,
+  // グループ1: 上限6
+  RUS: 6,
+  KOR: 6,
+  OKN: 6,
+  OGS: 6,
+  TAW: 6,
+  MTR: 6,
+  // グループ2: 上限8
+  SKH: 8,
+  HKG: 8,
+  PHL: 8,
+  GUM: 8,
+  // グループ3: 上限10
+  BGD: 10,
+  VNM: 10,
+  SGP: 10,
+  IDN: 10,
+  AUS: 10,
+  PNG: 10,
+  PLW: 10,
 };
 
 // 船の速度から所要ターン数を計算
