@@ -481,6 +481,35 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
             selectedRoute={isReplayMode ? null : selectedRoute}
             plannedRoutes={isReplayMode ? [] : plannedRoutes}
           />
+          {/* アイテム選択中のガイドオーバーレイ */}
+          {activeItem && (
+            <div className="item-guide-overlay">
+              <div className="item-guide-content">
+                <div className="item-guide-icon">
+                  {activeItem === 'supplyBoost' && '📦'}
+                  {activeItem === 'demandFreeze' && '❄️'}
+                  {activeItem === 'teleport' && '⚡'}
+                </div>
+                <div className="item-guide-text">
+                  {activeItem === 'supplyBoost' && (
+                    <>
+                      <div className="guide-title">緊急生産</div>
+                      <div className="guide-desc">灰色の供給拠点をクリックして在庫を満タンにします</div>
+                    </>
+                  )}
+                  {activeItem === 'teleport' && (
+                    <>
+                      <div className="guide-title">瞬間移動</div>
+                      <div className="guide-desc">任意の港をクリックして船を瞬時に移動させます</div>
+                    </>
+                  )}
+                </div>
+                <button className="item-guide-cancel" onClick={() => setActiveItem(null)}>
+                  キャンセル
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 右側：情報パネル */}
