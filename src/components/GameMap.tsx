@@ -220,7 +220,7 @@ export const GameMap: React.FC<GameMapProps> = ({
     const html = mobile ? `
       <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="${glowStyle}">
         <circle cx="${size/2}" cy="${size/2}" r="${(size - strokeWidth) / 2}" fill="#444" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
-        <text x="${size/2}" y="${size/2 + 3}" text-anchor="middle" font-size="8" font-weight="bold">${stockText}</text>
+        <text x="${size/2}" y="${size/2 + 4}" text-anchor="middle" font-size="10" font-weight="bold">${stockText}</text>
       </svg>
     ` : `
       <div class="supply-port-marker ${isHighlighted ? 'highlighted' : ''}" style="${glowStyle}">
@@ -299,7 +299,7 @@ export const GameMap: React.FC<GameMapProps> = ({
     <div className="game-map">
       <MapContainer
         center={mobile ? [5, 125] : [22, 125]}
-        zoom={mobile ? 3.3 : 4.0}
+        zoom={mobile ? 3.1 : 4.0}
         zoomSnap={0.1}
         zoomDelta={0.5}
         scrollWheelZoom={true}
