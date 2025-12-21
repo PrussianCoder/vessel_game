@@ -681,6 +681,7 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
           <div className="replay-controls">
             <span className="replay-label">リプレイ</span>
             <span className="replay-turn">ターン {displayGameState.turn}/{gameState.turn - 1}</span>
+            <span className="replay-score">スコア: {displayGameState.score}</span>
             <button
               className="replay-prev-btn"
               onClick={() => setReplayIndex(prev => Math.max(0, prev - 1))}
@@ -701,6 +702,39 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
             <button className="replay-close-btn" onClick={stopReplay}>
               ✕ 閉じる
             </button>
+          </div>
+          {/* リプレイ中の在庫情報 */}
+          <div className="replay-info-panel">
+            <div className="replay-inventory-row">
+              {displayGameState.cityInventories.map((inv) => {
+                const city = displayGameState.ports[inv.portId];
+                return (
+                  <div key={inv.portId} className={`replay-inv-item ${inv.color}`}>
+                    <span className="replay-inv-name">{city?.nameJp?.slice(0, 2)}</span>
+                    <span className="replay-inv-stock">{inv.stock}</span>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="replay-ships-row">
+              {displayGameState.ships.map((ship) => {
+                const cargoCount = ship.cargo.reduce((sum, c) => sum + c.quantity, 0);
+                const location = ship.status === 'docked' && ship.currentPort
+                  ? displayGameState.ports[ship.currentPort]?.nameJp?.slice(0, 2)
+                  : ship.sailingTo
+                    ? `→${displayGameState.ports[ship.sailingTo]?.nameJp?.slice(0, 2)}`
+                    : '移動中';
+                return (
+                  <div key={ship.id} className="replay-ship-item">
+                    <span className="replay-ship-icon">
+                      {ship.type === 'large' ? '🚢' : ship.type === 'medium' ? '⛵' : '🛥️'}
+                    </span>
+                    <span className="replay-ship-location">{location}</span>
+                    <span className="replay-ship-cargo">{cargoCount}/{ship.capacity}</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
@@ -865,6 +899,34 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
           </button>
         </div>
       </div>
+
+      {/* モバイル用アイテムボタン（地図右側） */}
+      <div className="mobile-item-buttons">
+        {gameState.items.map((item) => (
+          <button
+            key={item.id}
+            className={`mobile-item-btn ${item.used ? 'used' : ''} ${activeItem === item.id ? 'active' : ''}`}
+            onClick={() => handleItemClick(item.id)}
+            disabled={item.used || gameState.status !== 'playing'}
+            title={item.description}
+          >
+            {item.id === 'supplyBoost' && '📦'}
+            {item.id === 'demandFreeze' && '❄️'}
+            {item.id === 'teleport' && '⚡'}
+          </button>
+        ))}
+      </div>
+
+      {/* モバイル用アイテム選択中ヒント */}
+      {activeItem && (
+        <div className="mobile-item-hint">
+          <span className="hint-text">
+            {activeItem === 'supplyBoost' && '供給拠点をタップして在庫を満タンに'}
+            {activeItem === 'teleport' && '任意の港をタップして船を移動'}
+          </span>
+          <button className="hint-cancel-btn" onClick={() => setActiveItem(null)}>✕</button>
+        </div>
+      )}
     </div>
   );
 };

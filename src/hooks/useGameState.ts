@@ -378,50 +378,9 @@ export function useGameState() {
       let newState = deepCopy(prev);
       const newLogs: GameLogEntry[] = [];
       let deliveredCargo = 0; // 今ターンで配達した貨物量
-
-      // 1. 需要消費フェーズ（demandFrozenThisTurnがtrueなら消費しない）
       const demandLevel = getDemandLevel(prev.turn);
-      if (!prev.demandFrozenThisTurn) {
-        for (const inv of newState.cityInventories) {
-          const demand = getDemandForTurn(prev.turn, inv.portId);
-          inv.stock -= demand;
 
-          if (inv.stock < 0) {
-            // ゲームオーバー
-            const port = newState.ports[inv.portId];
-            newLogs.push({
-              turn: prev.turn,
-              message: `${port.nameJp}の在庫が枯渇しました！ゲームオーバー`,
-              type: 'danger',
-            });
-            return {
-              ...newState,
-              status: 'gameover',
-              logs: [...newState.logs, ...newLogs],
-            };
-          }
-
-          if (inv.stock <= 5) {
-            const port = newState.ports[inv.portId];
-            newLogs.push({
-              turn: prev.turn,
-              message: `警告: ${port.nameJp}の在庫が残り${inv.stock}です！`,
-              type: 'warning',
-            });
-          }
-        }
-      } else {
-        // 消費抑制アイテム使用中
-        newLogs.push({
-          turn: prev.turn,
-          message: '消費抑制により需要消費が停止しました',
-          type: 'success',
-        });
-      }
-      // demandFrozenThisTurnをリセット
-      newState.demandFrozenThisTurn = false;
-
-      // 2. 到着 & 荷下ろしフェーズ
+      // 1. 到着 & 荷下ろしフェーズ（入荷を先に処理）
       for (const ship of newState.ships) {
         if (ship.status === 'sailing' && ship.remainingTurns !== undefined) {
           ship.remainingTurns -= 1;
@@ -467,7 +426,49 @@ export function useGameState() {
         }
       }
 
-      // 3. 供給生成フェーズ（各色の在庫上限は10）
+      // 2. 需要消費フェーズ（demandFrozenThisTurnがtrueなら消費しない）
+      // 入荷後に消費を行うので、在庫+入荷-消費が負になった場合のみゲームオーバー
+      if (!prev.demandFrozenThisTurn) {
+        for (const inv of newState.cityInventories) {
+          const demand = getDemandForTurn(prev.turn, inv.portId);
+          inv.stock -= demand;
+
+          if (inv.stock < 0) {
+            // ゲームオーバー
+            const port = newState.ports[inv.portId];
+            newLogs.push({
+              turn: prev.turn,
+              message: `${port.nameJp}の在庫が枯渇しました！ゲームオーバー`,
+              type: 'danger',
+            });
+            return {
+              ...newState,
+              status: 'gameover',
+              logs: [...newState.logs, ...newLogs],
+            };
+          }
+
+          if (inv.stock <= 5) {
+            const port = newState.ports[inv.portId];
+            newLogs.push({
+              turn: prev.turn,
+              message: `警告: ${port.nameJp}の在庫が残り${inv.stock}です！`,
+              type: 'warning',
+            });
+          }
+        }
+      } else {
+        // 消費抑制アイテム使用中
+        newLogs.push({
+          turn: prev.turn,
+          message: '消費抑制により需要消費が停止しました',
+          type: 'success',
+        });
+      }
+      // demandFrozenThisTurnをリセット
+      newState.demandFrozenThisTurn = false;
+
+      // 3. 供給拠点の在庫生成フェーズ（各色の在庫上限は10）
       const SUPPLY_STOCK_LIMIT = 10;
       for (const portId of Object.keys(newState.ports) as PortId[]) {
         const port = newState.ports[portId];
