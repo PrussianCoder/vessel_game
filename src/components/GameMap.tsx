@@ -208,7 +208,20 @@ export const GameMap: React.FC<GameMapProps> = ({
     // グロー効果も船の色に
     const glowStyle = isHighlighted ? `filter: drop-shadow(0 0 6px ${currentShipHighlightColor});` : '';
 
-    const html = `
+    // モバイル版は縦配置、PC版は横配置
+    const html = mobile ? `
+      <div class="supply-port-marker vertical ${isHighlighted ? 'highlighted' : ''}" style="${glowStyle}">
+        <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+          <circle cx="${size/2}" cy="${size/2}" r="${(size - strokeWidth) / 2}" fill="#666" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
+        </svg>
+        <div class="supply-stock-labels">
+          ${redStock > 0 ? `<span class="stock-label red">${redStock}</span>` : ''}
+          ${blueStock > 0 ? `<span class="stock-label blue">${blueStock}</span>` : ''}
+          ${yellowStock > 0 ? `<span class="stock-label yellow">${yellowStock}</span>` : ''}
+          ${greenStock > 0 ? `<span class="stock-label green">${greenStock}</span>` : ''}
+        </div>
+      </div>
+    ` : `
       <div class="supply-port-marker ${isHighlighted ? 'highlighted' : ''}" style="${glowStyle}">
         <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
           <circle cx="${size/2}" cy="${size/2}" r="${(size - strokeWidth) / 2}" fill="#666" stroke="${strokeColor}" stroke-width="${strokeWidth}"/>
@@ -222,11 +235,17 @@ export const GameMap: React.FC<GameMapProps> = ({
       </div>
     `;
 
+    // モバイル版は縦に配置するため高さを増やす
+    const iconWidth = mobile ? size : size + 60;
+    const iconHeight = mobile ? size + 20 : size;
+    const anchorX = size / 2;
+    const anchorY = mobile ? size / 2 : size / 2;
+
     return L.divIcon({
       className: `supply-port-icon ${isHighlighted ? 'highlighted' : ''}`,
       html: html,
-      iconSize: [size + 60, size],
-      iconAnchor: [size / 2, size / 2],
+      iconSize: [iconWidth, iconHeight],
+      iconAnchor: [anchorX, anchorY],
     });
   };
 

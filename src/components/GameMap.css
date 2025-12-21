@@ -149,6 +149,13 @@
   gap: 4px;
 }
 
+/* モバイル版: 縦配置（円の下に在庫ラベル） */
+.supply-port-marker.vertical {
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
 .supply-stock-labels {
   display: flex;
   gap: 2px;
