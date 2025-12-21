@@ -291,14 +291,14 @@ export const GameMap: React.FC<GameMapProps> = ({
 
   // スクロール境界（ゲームエリアを制限）
   const maxBounds = useMemo(() => L.latLngBounds(
-    L.latLng(-60, 70),   // 南西（オーストラリア南部、インド西部）
+    L.latLng(-80, 70),   // 南西（オーストラリア南部、インド西部）
     L.latLng(60, 170)    // 北東（樺太北部、太平洋）
   ), []);
 
   return (
     <div className="game-map">
       <MapContainer
-        center={mobile ? [5, 125] : [22, 125]}
+        center={mobile ? [-5, 125] : [22, 125]}
         zoom={mobile ? 2.8 : 4.0}
         zoomSnap={0.1}
         zoomDelta={0.5}
