@@ -120,6 +120,7 @@ export interface TurnSnapshot {
   ships: {
     id: string;
     cargoCount: number;
+    cargoByColor: Record<CargoColor, number>; // 色別の積載量
     location: PortId | null;
     sailingTo: PortId | null;
   }[];

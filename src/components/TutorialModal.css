@@ -217,6 +217,37 @@
 .city-dot.yellow { background: #ffd43b; }
 .city-dot.green { background: #69db7c; }
 
+/* 色と都市の対応表示 */
+.city-color-mapping {
+  margin: 12px 0;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.mapping-title {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.mapping-list {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.mapping-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: white;
+  font-weight: 500;
+}
+
 .tutorial-goal .score-info {
   display: flex;
   align-items: center;
@@ -611,6 +642,48 @@
   font-weight: bold;
 }
 
+.highlight-pink {
+  color: #ff69b4;
+  font-weight: bold;
+}
+
+/* ===== STEP 3: 行き先選択（Leaflet地図） ===== */
+.tutorial-map-container {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 8px;
+  overflow: visible;
+  width: 100%;
+}
+
+.tutorial-map-container .leaflet-container {
+  background: #2e5a7a;
+  z-index: 1;
+}
+
+/* Leafletタイルレイヤーの表示を確保 */
+.tutorial-map-container .leaflet-tile-pane {
+  z-index: 1;
+}
+
+.tutorial-map-container .leaflet-overlay-pane {
+  z-index: 2;
+}
+
+.tutorial-map-container .leaflet-marker-pane {
+  z-index: 3;
+}
+
+.tutorial-port-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.tutorial-ship-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
 /* ===== STEP 3: 行き先選択（静的版） ===== */
 .destination-demo {
   width: 100%;
@@ -924,6 +997,7 @@
 .mock-bar-fill.red { background: #ff6b6b; }
 .mock-bar-fill.blue { background: #4dabf7; }
 .mock-bar-fill.yellow { background: #ffd43b; }
+.mock-bar-fill.green { background: #69db7c; }
 
 .consume {
   color: #ff6b6b;
@@ -990,4 +1064,317 @@
 
 .item-list strong {
   color: white;
+}
+
+/* ===== 供給拠点の説明 ===== */
+.supply-port-demo {
+  width: 100%;
+}
+
+.supply-port-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #4dabf7;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.supply-port-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.supply-port-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.supply-port-item .port-icon {
+  font-size: 20px;
+}
+
+.supply-port-item .port-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  min-width: 50px;
+}
+
+.port-production {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.cargo-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.cargo-dot.red { background: #ff6b6b; }
+.cargo-dot.blue { background: #4dabf7; }
+.cargo-dot.yellow { background: #ffd43b; }
+.cargo-dot.green { background: #69db7c; }
+
+.production-text {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-left: 4px;
+}
+
+.stock-limit-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px;
+  background: rgba(255, 212, 59, 0.15);
+  border: 1px solid rgba(255, 212, 59, 0.3);
+  border-radius: 8px;
+}
+
+.limit-icon {
+  font-size: 18px;
+}
+
+.limit-text {
+  font-size: 13px;
+  font-weight: bold;
+  color: #ffd43b;
+}
+
+/* ===== 都市在庫＋需要レベル複合表示 ===== */
+.inventory-combined {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.mock-inventory.compact {
+  padding: 10px;
+  max-width: 100%;
+}
+
+/* ===== 需要レベルと消費量表 ===== */
+.demand-level-section {
+  width: 100%;
+}
+
+.demand-level-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #4dabf7;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.demand-level-desc {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  margin: 0 0 12px 0;
+}
+
+.demand-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.demand-table th,
+.demand-table td {
+  padding: 8px 6px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.demand-table th {
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.demand-table th .city-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.demand-table tbody tr {
+  background: rgba(255, 255, 255, 0.03);
+  transition: background 0.2s;
+}
+
+.demand-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.level-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.level-badge.lv1 {
+  background: rgba(105, 219, 124, 0.3);
+  color: #69db7c;
+}
+
+.level-badge.lv2 {
+  background: rgba(255, 212, 59, 0.3);
+  color: #ffd43b;
+}
+
+.level-badge.lv3 {
+  background: rgba(255, 107, 107, 0.3);
+  color: #ff6b6b;
+}
+
+.consume-value {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.consume-value.low {
+  color: #69db7c;
+}
+
+.consume-value.high {
+  color: #ff6b6b;
+  font-size: 13px;
+}
+
+/* 速度の説明 */
+.speed-explanation {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.speed-note {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
+/* 地図凡例（インライン） */
+.map-legend-inline {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 8px 0;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+
+.legend-inline-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.port-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid;
+}
+
+.port-dot.demand {
+  background: #333;
+  border-color: #4dabf7;
+}
+
+.port-dot.supply {
+  background: #666;
+  border-color: #666;
+}
+
+/* 荷下ろし説明 */
+.unload-note {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 4px 0;
+}
+
+.color-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  margin: 0 2px;
+}
+
+.color-badge.red {
+  background: rgba(255, 107, 107, 0.3);
+  color: #ff6b6b;
+}
+
+/* 貨物積載の注意書き */
+.cargo-note {
+  font-size: 12px;
+  color: rgba(255, 212, 59, 0.9);
+  margin: 8px 0 4px 0;
+}
+
+/* ゲームオーバー説明 */
+.gameover-demo {
+  width: 100%;
+  text-align: center;
+}
+
+.gameover-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ff6b6b;
+  margin-bottom: 16px;
+}
+
+.gameover-conditions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.condition-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.condition-item.danger {
+  background: rgba(255, 107, 107, 0.15);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.condition-item strong {
+  color: #ff6b6b;
+}
+
+.condition-icon {
+  font-size: 20px;
 }

@@ -13,14 +13,9 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStartGame, onShowGui
         <div className="title-section">
           <h1 className="game-title">
             <span className="title-icon">🚢</span>
-            Vessel Game
+            Renom Vessel Game
           </h1>
-          <p className="game-subtitle">日本列島配船最適化ゲーム</p>
-        </div>
-
-        <div className="description-section">
-          <p>海外の供給拠点から日本の需要都市へ</p>
-          <p>貨物を輸送する戦略シミュレーション</p>
+          <p className="game-subtitle">配船計画最適化ゲーム</p>
         </div>
 
         <div className="button-section">
@@ -37,8 +32,8 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStartGame, onShowGui
         <div className="info-section">
           <div className="info-card">
             <div className="info-header">ゲーム目標</div>
-            <p>30ターン生き残れ！</p>
-            <p className="info-detail">都市の在庫が0になるとゲームオーバー</p>
+            <p>複数の船を駆使して、</p>
+            <p>なるべく多くの貨物を届けよう！</p>
           </div>
           <div className="ship-preview">
             <div className="ship-item">

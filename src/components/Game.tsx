@@ -5,7 +5,7 @@ import { InfoPanel } from './InfoPanel';
 import { TutorialModal } from './TutorialModal';
 import { GameAnalysis } from './GameAnalysis';
 import { useGameState } from '../hooks/useGameState';
-import type { PortId, Ship, CargoColor } from '../types/game';
+import type { PortId, CargoColor } from '../types/game';
 import './Game.css';
 
 // 船の操作順序
@@ -74,15 +74,6 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
       });
     }
   }, [currentShip, reachablePorts]);
-
-
-  // 船クリック時の処理
-  const handleShipClick = useCallback((ship: Ship) => {
-    const index = SHIP_ORDER.indexOf(ship.id as typeof SHIP_ORDER[number]);
-    if (index !== -1) {
-      setCurrentShipIndex(index);
-    }
-  }, []);
 
   // 貨物積み込み（1個ずつ）- ダブルクリック防止付き
   const handleLoadCargo = useCallback((color: CargoColor) => {
@@ -327,7 +318,7 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
     <div className="game-container">
       {/* ヘッダー */}
       <header className="game-header">
-        <h1>Vessel Game</h1>
+        <h1>Renom Vessel Game</h1>
         <div className="header-info">
           <span className="turn-info">ターン {gameState.turn}/{gameState.maxTurns}</span>
           <span className={`demand-level level-${gameState.demandLevel}`}>需要 Lv{gameState.demandLevel}</span>
@@ -369,7 +360,6 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
           <GameMap
             gameState={gameState}
             onPortClick={handlePortClick}
-            onShipClick={handleShipClick}
             selectedPortId={currentShip?.currentPort || null}
             selectedShipId={currentShip?.id || null}
             highlightedPorts={reachablePorts}
@@ -529,7 +519,7 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
               <button
                 className="tweet-btn"
                 onClick={() => {
-                  const text = `Vessel Gameで${gameState.turn - 1}ターン生き残り、${gameState.score}点を獲得しました🚢\n\n#VesselGame`;
+                  const text = `Renom Vessel Gameで${gameState.turn - 1}ターン生き残り、${gameState.score}点を獲得しました🚢\n\n#RenomVesselGame`;
                   const url = 'https://vessel-game.vercel.app';
                   window.open(
                     `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
@@ -558,7 +548,7 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
 
       {/* モバイル用ヘッダー */}
       <header className="mobile-header">
-        <span className="mobile-title">Vessel Game</span>
+        <span className="mobile-title">Renom Vessel Game</span>
         <div className="mobile-stats">
           <span className="stat-turn">{gameState.turn}/{gameState.maxTurns}</span>
           <span className="stat-level">Lv{gameState.demandLevel}</span>

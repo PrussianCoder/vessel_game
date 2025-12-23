@@ -17,7 +17,6 @@ interface PlannedRoute {
 interface GameMapProps {
   gameState: GameState;
   onPortClick?: (portId: PortId) => void;
-  onShipClick?: (ship: Ship) => void;
   selectedPortId: PortId | null;
   selectedShipId: string | null;
   highlightedPorts?: PortId[];
@@ -117,7 +116,6 @@ const findPath = (
 export const GameMap: React.FC<GameMapProps> = ({
   gameState,
   onPortClick,
-  onShipClick,
   selectedPortId,
   selectedShipId,
   highlightedPorts = [],
@@ -421,29 +419,11 @@ export const GameMap: React.FC<GameMapProps> = ({
           const latLng = toLatLng(lat, lng);
           const isSelected = selectedShipId === ship.id;
 
-          // 船がいる港を取得
-          const shipPortId = ship.status === 'docked' ? ship.currentPort : null;
-          // その港がハイライトされているか（到達可能か）
-          const isDestination = shipPortId && highlightedPorts.includes(shipPortId);
-
           return (
             <Marker
               key={ship.id}
               position={latLng}
               icon={createShipIcon(ship, isSelected)}
-              eventHandlers={{
-                click: (e) => {
-                  e.originalEvent.stopPropagation();
-                  if (ship.status === 'docked') {
-                    // 到達可能な港にいる船をクリックした場合は、その港への移動を優先
-                    if (isDestination && shipPortId) {
-                      onPortClick?.(shipPortId);
-                    } else {
-                      onShipClick?.(ship);
-                    }
-                  }
-                },
-              }}
             />
           );
         })}

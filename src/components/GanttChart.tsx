@@ -122,21 +122,6 @@ export const GanttChart: React.FC<GanttChartProps> = ({ gameState, currentShipId
         );
       })}
 
-      {/* 需要レベル表示 */}
-      <div className="gantt-demand-level">
-        <div className="gantt-ship-name">需要Lv</div>
-        <div className="gantt-bars">
-          <div className="demand-level-bar lv1" style={{ width: '33.33%' }}>
-            Lv1
-          </div>
-          <div className="demand-level-bar lv2" style={{ width: '33.33%' }}>
-            Lv2
-          </div>
-          <div className="demand-level-bar lv3" style={{ width: '33.34%' }}>
-            Lv3
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
