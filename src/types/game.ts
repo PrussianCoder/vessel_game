@@ -112,3 +112,16 @@ export interface SailAction {
 }
 
 export type PlayerAction = LoadCargoAction | SailAction;
+
+// ゲーム分析用のターンごとのスナップショット
+export interface TurnSnapshot {
+  turn: number;
+  cityInventories: { portId: PortId; stock: number }[];
+  ships: {
+    id: string;
+    cargoCount: number;
+    location: PortId | null;
+    sailingTo: PortId | null;
+  }[];
+  score: number;
+}

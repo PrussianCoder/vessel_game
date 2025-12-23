@@ -270,6 +270,24 @@
   align-items: center;
 }
 
+.undo-to-last-btn {
+  padding: 14px 36px;
+  border: 2px solid #ffc107;
+  border-radius: 30px;
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.undo-to-last-btn:hover {
+  background: rgba(255, 193, 7, 0.3);
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+}
+
 .retry-btn {
   padding: 14px 48px;
   border: none;
@@ -285,6 +303,24 @@
 .retry-btn:hover {
   transform: scale(1.05);
   box-shadow: 0 8px 25px rgba(77, 171, 247, 0.4);
+}
+
+.analysis-btn {
+  padding: 12px 36px;
+  border: 2px solid #9c27b0;
+  border-radius: 30px;
+  background: rgba(156, 39, 176, 0.15);
+  color: #ce93d8;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.analysis-btn:hover {
+  background: rgba(156, 39, 176, 0.3);
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(156, 39, 176, 0.3);
 }
 
 .tweet-btn {
