@@ -424,6 +424,8 @@ export const GameMap: React.FC<GameMapProps> = ({
               key={ship.id}
               position={latLng}
               icon={createShipIcon(ship, isSelected)}
+              interactive={false}
+              zIndexOffset={1000}
             />
           );
         })}

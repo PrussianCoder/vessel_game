@@ -79,10 +79,11 @@
   margin-top: 4px;
 }
 
-/* 船アイコンのスタイル */
+/* 船アイコンのスタイル - クリックを通過させる */
 .ship-icon {
   background: transparent !important;
   border: none !important;
+  pointer-events: none !important;
 }
 
 .ship-marker {
@@ -90,12 +91,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.ship-marker:hover {
-  transform: scale(1.2);
+  pointer-events: none;
 }
 
 
