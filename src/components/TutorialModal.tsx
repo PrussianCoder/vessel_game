@@ -244,13 +244,29 @@ const GoalStep: React.FC = () => (
   <div className="tutorial-goal">
     <div className="goal-banner">
       <span className="goal-icon">🎯</span>
-      <span className="goal-text">30ターンで多くの荷物を届けよう！</span>
+      <span className="goal-text">多くの荷物を届けよう！</span>
     </div>
     <p className="goal-description">
       <strong>供給拠点</strong>（海外の港）で貨物を積み、<strong>需要拠点</strong>（日本の4都市）へ届けましょう。
       <br />
       <strong className="warning-text">都市の在庫が0になるとゲームオーバー！</strong>
     </p>
+    <div className="game-modes-section">
+      <div className="game-mode-item normal">
+        <span className="mode-icon">▶</span>
+        <div className="mode-info">
+          <span className="mode-name">通常モード</span>
+          <span className="mode-desc">30ターン生き残ればクリア！</span>
+        </div>
+      </div>
+      <div className="game-mode-item endless">
+        <span className="mode-icon">∞</span>
+        <div className="mode-info">
+          <span className="mode-name">エンドレスモード</span>
+          <span className="mode-desc">在庫切れまで挑戦し続ける！</span>
+        </div>
+      </div>
+    </div>
     <div className="city-color-mapping">
       <div className="mapping-title">各都市には対応する色の貨物を届けます</div>
       <div className="mapping-list">
@@ -602,7 +618,7 @@ const GameOverStep: React.FC = () => (
           </div>
           <div className="condition-item">
             <span className="condition-icon">🏁</span>
-            <span><strong>30ターン</strong>経過</span>
+            <span><strong>30ターン</strong>経過（通常モード）</span>
           </div>
         </div>
       </div>
@@ -621,6 +637,51 @@ const GameOverStep: React.FC = () => (
   </div>
 );
 
+const EndlessModeStep: React.FC = () => (
+  <div className="tutorial-step">
+    <div className="step-visual">
+      <div className="endless-mode-demo">
+        <div className="endless-title">
+          <span className="endless-icon">∞</span>
+          <span>エンドレスモード</span>
+        </div>
+        <div className="endless-features">
+          <div className="endless-feature-item">
+            <span className="feature-icon">🔄</span>
+            <span>30ターン以降も<strong>在庫が切れるまで</strong>プレイ継続</span>
+          </div>
+          <div className="endless-feature-item">
+            <span className="feature-icon">📈</span>
+            <span>需要レベルは<strong>10ターンごと</strong>に上昇し続ける</span>
+          </div>
+          <div className="endless-feature-item">
+            <span className="feature-icon">🏆</span>
+            <span>より長く生き残り、<strong>ハイスコア</strong>を目指そう！</span>
+          </div>
+        </div>
+        <div className="endless-demand-table">
+          <div className="endless-demand-title">需要レベルの上昇（エンドレスモード）</div>
+          <div className="endless-demand-list">
+            <span className="demand-item"><span className="level-badge lv1">Lv1</span> 1〜10ターン</span>
+            <span className="demand-item"><span className="level-badge lv2">Lv2</span> 11〜20ターン</span>
+            <span className="demand-item"><span className="level-badge lv3">Lv3</span> 21〜30ターン</span>
+            <span className="demand-item"><span className="level-badge lv4">Lv4</span> 31〜40ターン</span>
+            <span className="demand-item endless-dots">...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="step-explanation">
+      <p>エンドレスモードは<strong>腕試し用</strong>のモードです。</p>
+      <p>需要レベルが上がるほど消費量が増え、難易度が上昇します。</p>
+      <div className="tip-box warning">
+        <span className="tip-icon">⚠️</span>
+        <span>Lv4以降は消費量がさらに増加！計画的な配船が必須です。</span>
+      </div>
+    </div>
+  </div>
+);
+
 const TUTORIAL_STEPS = [
   { title: 'ゲーム目標', component: GoalStep },
   { title: '画面の見方', component: ScreenLayoutStep },
@@ -631,6 +692,7 @@ const TUTORIAL_STEPS = [
   { title: 'STEP 3: 行き先を選ぶ', component: DestinationStep },
   { title: 'STEP 4: ターンを進める', component: TurnProgressStep },
   { title: 'ゲーム終了', component: GameOverStep },
+  { title: 'エンドレスモード', component: EndlessModeStep },
 ];
 
 export const TutorialModal: React.FC<TutorialModalProps> = ({ isOpen, onClose }) => {

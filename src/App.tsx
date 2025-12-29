@@ -2,13 +2,16 @@ import { useState } from 'react';
 import { Game } from './components/Game';
 import { StartScreen } from './components/StartScreen';
 import { TutorialModal } from './components/TutorialModal';
+import type { GameMode } from './types/game';
 import './App.css';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
+  const [gameMode, setGameMode] = useState<GameMode>('normal');
   const [showGuide, setShowGuide] = useState(false);
 
-  const handleStartGame = () => {
+  const handleStartGame = (mode: GameMode) => {
+    setGameMode(mode);
     setGameStarted(true);
   };
 
@@ -33,7 +36,7 @@ function App() {
     );
   }
 
-  return <Game onReturnToStart={handleReturnToStart} />;
+  return <Game key={gameMode} gameMode={gameMode} onReturnToStart={handleReturnToStart} />;
 }
 
 export default App;

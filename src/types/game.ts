@@ -63,8 +63,11 @@ export interface CityInventory {
   stock: number;
 }
 
-// 需要レベル
-export type DemandLevel = 1 | 2 | 3;
+// 需要レベル（エンドレスモードでは4以上も可能）
+export type DemandLevel = number;
+
+// ゲームモード
+export type GameMode = 'normal' | 'endless';
 
 // 需要テーブル
 export interface DemandTable {
@@ -89,6 +92,7 @@ export interface GameState {
   maxTurns: number;
   status: GameStatus;
   demandLevel: DemandLevel;
+  gameMode: GameMode;
   ports: Record<PortId, Port>;
   ships: Ship[];
   cityInventories: CityInventory[];

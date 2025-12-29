@@ -121,7 +121,56 @@
 }
 
 .button-icon {
-  font-size: 1.2em;
+  font-size: 1.4em;
+}
+
+/* モード選択ボタン */
+.mode-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.start-button .button-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.start-button .mode-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.start-button .mode-desc {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  font-weight: normal;
+}
+
+.start-button.normal-mode {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.start-button.normal-mode:hover {
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.5);
+}
+
+.start-button.endless-mode {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+}
+
+.start-button.endless-mode:hover {
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+}
+
+.start-button.endless-mode .button-icon {
+  font-size: 1.6em;
+  font-weight: bold;
 }
 
 /* 情報セクション */
@@ -269,10 +318,27 @@
     margin-bottom: 24px;
   }
 
+  .mode-buttons {
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 300px;
+  }
+
   .start-button {
-    padding: 12px 32px;
+    padding: 14px 24px;
+    font-size: 1rem;
+    gap: 10px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .start-button .mode-name {
     font-size: 1.1rem;
-    gap: 8px;
+  }
+
+  .start-button .mode-desc {
+    font-size: 0.8rem;
   }
 
   .guide-button {

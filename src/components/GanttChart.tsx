@@ -8,10 +8,7 @@ interface GanttChartProps {
 }
 
 export const GanttChart: React.FC<GanttChartProps> = ({ gameState, currentShipId }) => {
-  const { turn, maxTurns, ships, ports } = gameState;
-
-  // ターンの配列を生成
-  const turns = Array.from({ length: maxTurns }, (_, i) => i + 1);
+  const { ships, ports } = gameState;
 
   // 色名から日本語へ
   const getColorName = (color: string) => {
@@ -49,16 +46,6 @@ export const GanttChart: React.FC<GanttChartProps> = ({ gameState, currentShipId
     <div className="gantt-chart">
       <div className="gantt-header">
         <div className="gantt-ship-label">船</div>
-        <div className="gantt-timeline">
-          {turns.map((t) => (
-            <div
-              key={t}
-              className={`gantt-turn ${t === turn ? 'current' : ''} ${t < turn ? 'past' : ''}`}
-            >
-              {t % 5 === 0 || t === 1 ? t : ''}
-            </div>
-          ))}
-        </div>
       </div>
 
       {ships.map((ship) => {

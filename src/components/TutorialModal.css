@@ -1378,3 +1378,164 @@
 .condition-icon {
   font-size: 20px;
 }
+
+
+/* エンドレスモード説明 */
+.endless-mode-demo {
+  width: 100%;
+  text-align: center;
+}
+
+.endless-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #ff6b6b;
+  margin-bottom: 16px;
+}
+
+.endless-title .endless-icon {
+  font-size: 28px;
+  animation: pulse 2s infinite;
+}
+
+.endless-features {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.endless-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  border-radius: 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.endless-feature-item .feature-icon {
+  font-size: 18px;
+}
+
+.endless-feature-item strong {
+  color: #ff6b6b;
+}
+
+.endless-demand-table {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.endless-demand-title {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 10px;
+}
+
+.endless-demand-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.endless-demand-list .demand-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.endless-demand-list .endless-dots {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ff6b6b;
+}
+
+.level-badge.lv4 {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* ゲームモード選択（ゲーム目標ページ） */
+.game-modes-section {
+  display: flex;
+  gap: 12px;
+  margin: 16px 0;
+  justify-content: center;
+}
+
+.game-mode-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  min-width: 160px;
+}
+
+.game-mode-item.normal {
+  background: rgba(76, 175, 80, 0.15);
+  border: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+.game-mode-item.endless {
+  background: rgba(255, 107, 107, 0.15);
+  border: 1px solid rgba(255, 107, 107, 0.4);
+}
+
+.game-mode-item .mode-icon {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.game-mode-item.normal .mode-icon {
+  color: #4CAF50;
+}
+
+.game-mode-item.endless .mode-icon {
+  color: #ff6b6b;
+}
+
+.game-mode-item .mode-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.game-mode-item .mode-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+}
+
+.game-mode-item .mode-desc {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@media (max-width: 480px) {
+  .game-modes-section {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .game-mode-item {
+    min-width: auto;
+    padding: 10px 14px;
+  }
+}

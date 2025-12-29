@@ -378,22 +378,38 @@ export function calculateTravelTime(distance: number, shipSpeed: number): number
   return Math.ceil(distance / shipSpeed);
 }
 
-// 指定したターンの需要レベルを取得
-export function getDemandLevel(turn: number): 1 | 2 | 3 {
-  if (turn <= 10) return 1;
-  if (turn <= 20) return 2;
-  return 3;
+// エンドレスモードの需要レベル上限
+const MAX_DEMAND_LEVEL = 5;
+
+// 指定したターンの需要レベルを取得（エンドレスモード対応）
+export function getDemandLevel(turn: number, isEndless: boolean = false): number {
+  if (!isEndless) {
+    // 通常モード: レベル1-3
+    if (turn <= 10) return 1;
+    if (turn <= 20) return 2;
+    return 3;
+  }
+  // エンドレスモード: 10ターンごとにレベルアップ（上限5）
+  const level = Math.floor((turn - 1) / 10) + 1;
+  return Math.min(level, MAX_DEMAND_LEVEL);
 }
 
-// 指定したターンの需要量を取得
-export function getDemandForTurn(turn: number, portId: PortId): number {
-  const level = getDemandLevel(turn);
-  const table = DEMAND_TABLES.find((t) => t.level === level);
-  return table?.demand[portId] ?? 0;
+// 指定したターンの需要量を取得（エンドレスモード対応）
+export function getDemandForTurn(turn: number, portId: PortId, isEndless: boolean = false): number {
+  const level = getDemandLevel(turn, isEndless);
+  return getDemandForPort(portId, level);
 }
 
-// 指定した需要レベルでの消費量を取得
+// 指定した需要レベルでの消費量を取得（レベル4以上はレベルに応じて増加）
 export function getDemandForPort(portId: PortId, level: number): number {
-  const table = DEMAND_TABLES.find((t) => t.level === level);
-  return table?.demand[portId] ?? 0;
+  // レベル3以下はテーブルから取得
+  if (level <= 3) {
+    const table = DEMAND_TABLES.find((t) => t.level === level);
+    return table?.demand[portId] ?? 0;
+  }
+  // レベル4以上: レベル3をベースに、レベルが1上がるごとに+1ずつ増加
+  const level3Table = DEMAND_TABLES.find((t) => t.level === 3);
+  const baseDemand = level3Table?.demand[portId] ?? 0;
+  const additionalDemand = level - 3;
+  return baseDemand + additionalDemand;
 }

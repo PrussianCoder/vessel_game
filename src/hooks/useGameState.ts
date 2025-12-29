@@ -5,6 +5,7 @@ import type {
   PortId,
   CargoColor,
   GameLogEntry,
+  GameMode,
 } from '../types/game';
 import {
   INITIAL_PORTS,
@@ -22,24 +23,32 @@ function deepCopy<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
 }
 
+// エンドレスモードの最大ターン数（実質無限）
+const ENDLESS_MAX_TURNS = 99;
+
 // 初期ゲーム状態を生成
-function createInitialGameState(): GameState {
+function createInitialGameState(gameMode: GameMode = 'normal'): GameState {
+  const isEndless = gameMode === 'endless';
+  const startMessage = isEndless
+    ? 'エンドレスモード開始！在庫が切れるまで挑戦しよう！'
+    : 'ゲーム開始！30ターン生き残れ！';
   return {
     turn: 1,
-    maxTurns: GAME_CONFIG.maxTurns,
+    maxTurns: isEndless ? ENDLESS_MAX_TURNS : GAME_CONFIG.maxTurns,
     status: 'playing',
     demandLevel: 1,
+    gameMode,
     ports: deepCopy(INITIAL_PORTS),
     ships: deepCopy(INITIAL_SHIPS),
     cityInventories: deepCopy(INITIAL_CITY_INVENTORIES),
     routes: deepCopy(ROUTES),
-    logs: [{ turn: 0, message: 'ゲーム開始！30ターン生き残れ！', type: 'info' }],
+    logs: [{ turn: 0, message: startMessage, type: 'info' }],
     score: 0,
   };
 }
 
-export function useGameState() {
-  const [gameState, setGameState] = useState<GameState>(createInitialGameState);
+export function useGameState(initialGameMode: GameMode = 'normal') {
+  const [gameState, setGameState] = useState<GameState>(() => createInitialGameState(initialGameMode));
   // undo用の履歴を保持（全履歴）
   const [stateHistory, setStateHistory] = useState<GameState[]>([]);
   // 積み込み処理の重複防止用
@@ -366,10 +375,11 @@ export function useGameState() {
     setGameState((prev) => {
       if (prev.status !== 'playing') return prev;
 
+      const isEndless = prev.gameMode === 'endless';
       let newState = deepCopy(prev);
       const newLogs: GameLogEntry[] = [];
       let deliveredCargo = 0; // 今ターンで配達した貨物量
-      const demandLevel = getDemandLevel(prev.turn);
+      const demandLevel = getDemandLevel(prev.turn, isEndless);
 
       // 1. 到着 & 荷下ろしフェーズ（入荷を先に処理）
       for (const ship of newState.ships) {
@@ -420,7 +430,7 @@ export function useGameState() {
       // 2. 需要消費フェーズ
       // 入荷後に消費を行うので、在庫+入荷-消費が負になった場合のみゲームオーバー
       for (const inv of newState.cityInventories) {
-        const demand = getDemandForTurn(prev.turn, inv.portId);
+        const demand = getDemandForTurn(prev.turn, inv.portId, isEndless);
         inv.stock -= demand;
 
         if (inv.stock < 0) {
@@ -464,7 +474,7 @@ export function useGameState() {
 
       // 4. ターン更新
       const newTurn = prev.turn + 1;
-      const newDemandLevel = getDemandLevel(newTurn);
+      const newDemandLevel = getDemandLevel(newTurn, isEndless);
 
       // 需要レベルアップ通知
       if (newDemandLevel > demandLevel) {
@@ -475,8 +485,8 @@ export function useGameState() {
         });
       }
 
-      // クリア判定
-      if (newTurn > GAME_CONFIG.maxTurns) {
+      // クリア判定（通常モードのみ）
+      if (!isEndless && newTurn > GAME_CONFIG.maxTurns) {
         newLogs.push({
           turn: newTurn,
           message: '30ターン生き残りました！ゲームクリア！',
@@ -532,9 +542,9 @@ export function useGameState() {
   // undoが可能かどうか
   const canUndo = stateHistory.length > 0;
 
-  // ゲームをリセット
-  const resetGame = useCallback(() => {
-    setGameState(createInitialGameState());
+  // ゲームをリセット（gameModeを指定可能、省略時は現在のモードを維持）
+  const resetGame = useCallback((newGameMode?: GameMode) => {
+    setGameState((prev) => createInitialGameState(newGameMode ?? prev.gameMode));
     setStateHistory([]);
   }, []);
 

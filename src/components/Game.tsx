@@ -5,17 +5,18 @@ import { InfoPanel } from './InfoPanel';
 import { TutorialModal } from './TutorialModal';
 import { GameAnalysis } from './GameAnalysis';
 import { useGameState } from '../hooks/useGameState';
-import type { PortId, CargoColor } from '../types/game';
+import type { PortId, CargoColor, GameMode } from '../types/game';
 import './Game.css';
 
 // 船の操作順序
 const SHIP_ORDER = ['large', 'medium', 'small'] as const;
 
 interface GameProps {
+  gameMode?: GameMode;
   onReturnToStart?: () => void;
 }
 
-export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
+export const Game: React.FC<GameProps> = ({ gameMode = 'normal', onReturnToStart }) => {
   const {
     gameState,
     stateHistory,
@@ -30,7 +31,7 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
     getAdjacentPorts,
     getShipRemainingCapacity,
     canLoadColor,
-  } = useGameState();
+  } = useGameState(gameMode);
 
   // 現在操作中の船のインデックス（大型→中型→小型の順）
   const [currentShipIndex, setCurrentShipIndex] = useState(0);
@@ -320,8 +321,13 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
       <header className="game-header">
         <h1>Renom Vessel Game</h1>
         <div className="header-info">
-          <span className="turn-info">ターン {gameState.turn}/{gameState.maxTurns}</span>
-          <span className={`demand-level level-${gameState.demandLevel}`}>需要 Lv{gameState.demandLevel}</span>
+          <span className="turn-info">
+            ターン {gameState.turn}{gameState.gameMode === 'normal' ? `/${gameState.maxTurns}` : ''}
+          </span>
+          {gameState.gameMode === 'endless' && (
+            <span className="endless-badge">ENDLESS</span>
+          )}
+          <span className={`demand-level level-${Math.min(gameState.demandLevel, 3)}`}>需要 Lv{gameState.demandLevel}</span>
           <span className="score-info">スコア: {gameState.score}</span>
         </div>
         <div className="header-controls">
@@ -492,7 +498,9 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
             <p className="end-message">
               {gameState.status === 'cleared'
                 ? '30ターン生き残りました！素晴らしい配船計画です！'
-                : '在庫が枯渇してしまいました...'}
+                : gameState.gameMode === 'endless'
+                  ? `${gameState.turn - 1}ターン生き残りました！在庫が枯渇してしまいました...`
+                  : '在庫が枯渇してしまいました...'}
             </p>
             <div className="end-stats">
               <div className="stat">
@@ -519,7 +527,8 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
               <button
                 className="tweet-btn"
                 onClick={() => {
-                  const text = `Renom Vessel Gameで${gameState.turn - 1}ターン生き残り、${gameState.score}点を獲得しました🚢\n\n#RenomVesselGame`;
+                  const modeText = gameState.gameMode === 'endless' ? 'エンドレスモードで' : '';
+                  const text = `Renom Vessel Game${modeText}${gameState.turn - 1}ターン生き残り、${gameState.score}点を獲得しました🚢\n\n#RenomVesselGame`;
                   const url = 'https://vessel-game.vercel.app';
                   window.open(
                     `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
@@ -550,7 +559,10 @@ export const Game: React.FC<GameProps> = ({ onReturnToStart }) => {
       <header className="mobile-header">
         <span className="mobile-title">Renom Vessel Game</span>
         <div className="mobile-stats">
-          <span className="stat-turn">{gameState.turn}/{gameState.maxTurns}</span>
+          <span className="stat-turn">
+            {gameState.turn}{gameState.gameMode === 'normal' ? `/${gameState.maxTurns}` : ''}
+            {gameState.gameMode === 'endless' && <span className="endless-icon">∞</span>}
+          </span>
           <span className="stat-level">Lv{gameState.demandLevel}</span>
           <span className="stat-score">{gameState.score}pt</span>
         </div>

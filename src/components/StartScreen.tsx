@@ -1,8 +1,9 @@
 import React from 'react';
+import type { GameMode } from '../types/game';
 import './StartScreen.css';
 
 interface StartScreenProps {
-  onStartGame: () => void;
+  onStartGame: (mode: GameMode) => void;
   onShowGuide: () => void;
 }
 
@@ -19,10 +20,22 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStartGame, onShowGui
         </div>
 
         <div className="button-section">
-          <button className="start-button" onClick={onStartGame}>
-            <span className="button-icon">▶</span>
-            ゲームスタート
-          </button>
+          <div className="mode-buttons">
+            <button className="start-button normal-mode" onClick={() => onStartGame('normal')}>
+              <span className="button-icon">▶</span>
+              <span className="button-text">
+                <span className="mode-name">通常モード</span>
+                <span className="mode-desc">30ターン生き残れ！</span>
+              </span>
+            </button>
+            <button className="start-button endless-mode" onClick={() => onStartGame('endless')}>
+              <span className="button-icon">∞</span>
+              <span className="button-text">
+                <span className="mode-name">エンドレスモード</span>
+                <span className="mode-desc">在庫切れまで挑戦！</span>
+              </span>
+            </button>
+          </div>
           <button className="guide-button" onClick={onShowGuide}>
             <span className="button-icon">?</span>
             遊び方ガイド

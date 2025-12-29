@@ -862,6 +862,28 @@
   color: #ff6b6b;
 }
 
+/* エンドレスモードバッジ */
+.endless-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.endless-icon {
+  margin-left: 4px;
+  font-weight: bold;
+  color: #ff6b6b;
+}
+
 /* チュートリアルヒント */
 .tutorial-hint {
   position: fixed;
