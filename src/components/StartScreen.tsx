@@ -2,6 +2,15 @@ import React, { useState } from 'react';
 import type { GameMode, SupplyMode } from '../types/game';
 import './StartScreen.css';
 
+// バージョン履歴
+const VERSION_HISTORY = [
+  { version: 'ver1.3', date: '2025.12.30', description: '供給モードにランダムを追加' },
+  { version: 'ver1.2', date: '2025.12.29', description: 'エンドレスモード追加' },
+  { version: 'ver1.1', date: '2025.12.25', description: 'リリース' },
+];
+
+const CURRENT_VERSION = VERSION_HISTORY[0];
+
 interface StartScreenProps {
   onStartGame: (mode: GameMode, supplyMode: SupplyMode) => void;
   onShowGuide: () => void;
@@ -9,6 +18,7 @@ interface StartScreenProps {
 
 export const StartScreen: React.FC<StartScreenProps> = ({ onStartGame, onShowGuide }) => {
   const [supplyMode, setSupplyMode] = useState<SupplyMode>('fixed');
+  const [showVersionHistory, setShowVersionHistory] = useState(false);
 
   return (
     <div className="start-screen">
@@ -84,6 +94,34 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStartGame, onShowGui
           </div>
         </div>
       </div>
+
+      <button className="version-info" onClick={() => setShowVersionHistory(true)}>
+        {CURRENT_VERSION.version} ({CURRENT_VERSION.date})
+      </button>
+
+      {showVersionHistory && (
+        <div className="version-modal-overlay" onClick={() => setShowVersionHistory(false)}>
+          <div className="version-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="version-modal-header">
+              <h3>バージョン履歴</h3>
+              <button className="version-modal-close" onClick={() => setShowVersionHistory(false)}>
+                ×
+              </button>
+            </div>
+            <div className="version-modal-content">
+              {VERSION_HISTORY.map((item, index) => (
+                <div key={item.version} className={`version-item ${index === 0 ? 'current' : ''}`}>
+                  <div className="version-item-header">
+                    <span className="version-number">{item.version}</span>
+                    <span className="version-date">{item.date}</span>
+                  </div>
+                  <p className="version-description">{item.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="background-decoration">
         <div className="wave wave1"></div>
