@@ -1,13 +1,15 @@
-import React from 'react';
-import type { GameMode } from '../types/game';
+import React, { useState } from 'react';
+import type { GameMode, SupplyMode } from '../types/game';
 import './StartScreen.css';
 
 interface StartScreenProps {
-  onStartGame: (mode: GameMode) => void;
+  onStartGame: (mode: GameMode, supplyMode: SupplyMode) => void;
   onShowGuide: () => void;
 }
 
 export const StartScreen: React.FC<StartScreenProps> = ({ onStartGame, onShowGuide }) => {
+  const [supplyMode, setSupplyMode] = useState<SupplyMode>('fixed');
+
   return (
     <div className="start-screen">
       <div className="start-content">
@@ -21,20 +23,38 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onStartGame, onShowGui
 
         <div className="button-section">
           <div className="mode-buttons">
-            <button className="start-button normal-mode" onClick={() => onStartGame('normal')}>
+            <button className="start-button normal-mode" onClick={() => onStartGame('normal', supplyMode)}>
               <span className="button-icon">▶</span>
               <span className="button-text">
                 <span className="mode-name">通常モード</span>
                 <span className="mode-desc">30ターン生き残れ！</span>
               </span>
             </button>
-            <button className="start-button endless-mode" onClick={() => onStartGame('endless')}>
+            <button className="start-button endless-mode" onClick={() => onStartGame('endless', supplyMode)}>
               <span className="button-icon">∞</span>
               <span className="button-text">
                 <span className="mode-name">エンドレスモード</span>
                 <span className="mode-desc">在庫切れまで挑戦！</span>
               </span>
             </button>
+          </div>
+
+          <div className="supply-mode-section">
+            <span className="supply-mode-label">供給モード:</span>
+            <div className="supply-mode-buttons">
+              <button
+                className={`supply-mode-btn ${supplyMode === 'fixed' ? 'active' : ''}`}
+                onClick={() => setSupplyMode('fixed')}
+              >
+                固定
+              </button>
+              <button
+                className={`supply-mode-btn ${supplyMode === 'random' ? 'active' : ''}`}
+                onClick={() => setSupplyMode('random')}
+              >
+                ランダム
+              </button>
+            </div>
           </div>
           <button className="guide-button" onClick={onShowGuide}>
             <span className="button-icon">?</span>

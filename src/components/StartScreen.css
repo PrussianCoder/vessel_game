@@ -173,6 +173,52 @@
   font-weight: bold;
 }
 
+/* 供給モード選択 */
+.supply-mode-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px 20px;
+  border-radius: 30px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.supply-mode-label {
+  color: #a8d4f0;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.supply-mode-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.supply-mode-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #a8d4f0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.supply-mode-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.supply-mode-btn.active {
+  background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+  color: #1a3a52;
+  border-color: #ffd700;
+  font-weight: bold;
+}
+
 /* 情報セクション */
 .info-section {
   display: flex;
@@ -377,6 +423,20 @@
 
   .ship-item .ship-emoji {
     font-size: 1.6rem;
+  }
+
+  .supply-mode-section {
+    padding: 10px 16px;
+    gap: 8px;
+  }
+
+  .supply-mode-label {
+    font-size: 0.85rem;
+  }
+
+  .supply-mode-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
   }
 
   .background-decoration {

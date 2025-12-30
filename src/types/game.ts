@@ -69,6 +69,9 @@ export type DemandLevel = number;
 // ゲームモード
 export type GameMode = 'normal' | 'endless';
 
+// 供給モード
+export type SupplyMode = 'fixed' | 'random';
+
 // 需要テーブル
 export interface DemandTable {
   level: DemandLevel;

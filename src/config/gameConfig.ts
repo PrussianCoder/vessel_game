@@ -413,3 +413,150 @@ export function getDemandForPort(portId: PortId, level: number): number {
   const additionalDemand = level - 3;
   return baseDemand + additionalDemand;
 }
+
+// 供給拠点のIDリスト
+const SUPPLY_PORT_IDS: PortId[] = ['OKN', 'RUS', 'KOR', 'TAW', 'VNM', 'PHL', 'HKG', 'GUM', 'PLW', 'IDN', 'PNG', 'OGS', 'MTR', 'SGP', 'SKH', 'AUS', 'BGD'];
+const COLORS: ('red' | 'blue' | 'yellow' | 'green')[] = ['red', 'blue', 'yellow', 'green'];
+
+// 港の色数をカウント（0より大きい色の数）
+function countColors(supply: Record<string, number>): number {
+  return COLORS.filter(c => supply[c] > 0).length;
+}
+
+// ランダム供給設定を生成する関数
+// 制約: 港ごとの合計と色ごとの合計を維持したまま、0.5刻みでシャッフル
+// 追加制約: 各港の色数は2種類以下
+export function generateRandomSupplyPerTurn(): Record<PortId, Record<'red' | 'blue' | 'yellow' | 'green', number>> {
+  // 現在の設定をコピー（supplyPerTurnを持つ港のみ）
+  const result: Record<string, Record<string, number>> = {};
+  const validPortIds: PortId[] = [];
+
+  for (const portId of SUPPLY_PORT_IDS) {
+    const port = INITIAL_PORTS[portId];
+    if (port.supplyPerTurn) {
+      result[portId] = { ...port.supplyPerTurn };
+      validPortIds.push(portId);
+    }
+  }
+
+  // ランダムモード用の初期調整
+  // シンガポール: 緑0.5→黄0.5
+  if (result['SGP']) {
+    result['SGP'] = { red: 0, blue: 0, yellow: 0.5, green: 0 };
+  }
+  // パプアニューギニア: 緑0.5→黄0.5
+  if (result['PNG']) {
+    result['PNG'] = { red: 0, blue: 0, yellow: 0.5, green: 0 };
+  }
+  // 台湾: 赤0.5青0.5→赤1.0青0.0
+  if (result['TAW']) {
+    result['TAW'] = { red: 1, blue: 0, yellow: 0, green: 0 };
+  }
+
+  // スワップ対象がない場合は元の設定を返す
+  if (validPortIds.length < 2) {
+    return result as Record<PortId, Record<'red' | 'blue' | 'yellow' | 'green', number>>;
+  }
+
+  // ペアスワップを繰り返してシャッフル
+  // 2つの港(p1, p2)と2つの色(c1, c2)を選び、
+  // p1[c1] += delta, p1[c2] -= delta, p2[c1] -= delta, p2[c2] += delta
+  // これにより行和・列和を維持したまま値を変更できる
+  const maxAttempts = 20000;
+  let successfulSwaps = 0;
+  const targetSwaps = 5000;
+
+  for (let i = 0; i < maxAttempts && successfulSwaps < targetSwaps; i++) {
+    // ランダムに2つの港を選択（validPortIdsから）
+    const p1Idx = Math.floor(Math.random() * validPortIds.length);
+    let p2Idx = Math.floor(Math.random() * validPortIds.length);
+    while (p2Idx === p1Idx) {
+      p2Idx = Math.floor(Math.random() * validPortIds.length);
+    }
+    const p1 = validPortIds[p1Idx];
+    const p2 = validPortIds[p2Idx];
+
+    // ランダムに2つの色を選択
+    const c1Idx = Math.floor(Math.random() * COLORS.length);
+    let c2Idx = Math.floor(Math.random() * COLORS.length);
+    while (c2Idx === c1Idx) {
+      c2Idx = Math.floor(Math.random() * COLORS.length);
+    }
+    const c1 = COLORS[c1Idx];
+    const c2 = COLORS[c2Idx];
+
+    const delta = 0.5;
+
+    const p1c1 = result[p1][c1];
+    const p1c2 = result[p1][c2];
+    const p2c1 = result[p2][c1];
+    const p2c2 = result[p2][c2];
+
+    // 正方向のスワップが可能か
+    const canSwapPositive = p1c2 >= delta && p2c1 >= delta;
+    // 負方向のスワップが可能か
+    const canSwapNegative = p1c1 >= delta && p2c2 >= delta;
+
+    // スワップ後の制約チェック用関数
+    const checkConstraints = (direction: 'positive' | 'negative'): boolean => {
+      // スワップ後の状態をシミュレート
+      const newP1 = { ...result[p1] };
+      const newP2 = { ...result[p2] };
+
+      if (direction === 'positive') {
+        newP1[c1] += delta;
+        newP1[c2] -= delta;
+        newP2[c1] -= delta;
+        newP2[c2] += delta;
+      } else {
+        newP1[c1] -= delta;
+        newP1[c2] += delta;
+        newP2[c1] += delta;
+        newP2[c2] -= delta;
+      }
+
+      // 制約1: 両方の港の色数が2以下かチェック
+      const colorCountOk = countColors(newP1) <= 2 && countColors(newP2) <= 2;
+
+      // 制約2: 各色の値が1.0以下かチェック
+      const maxSupplyOk = COLORS.every(c => newP1[c] <= 1.0 && newP2[c] <= 1.0);
+
+      return colorCountOk && maxSupplyOk;
+    };
+
+    // 制約を考慮してスワップ可否を判定
+    const canPositiveWithLimit = canSwapPositive && checkConstraints('positive');
+    const canNegativeWithLimit = canSwapNegative && checkConstraints('negative');
+
+    if (canPositiveWithLimit && canNegativeWithLimit) {
+      if (Math.random() < 0.5) {
+        result[p1][c1] += delta;
+        result[p1][c2] -= delta;
+        result[p2][c1] -= delta;
+        result[p2][c2] += delta;
+      } else {
+        result[p1][c1] -= delta;
+        result[p1][c2] += delta;
+        result[p2][c1] += delta;
+        result[p2][c2] -= delta;
+      }
+      successfulSwaps++;
+    } else if (canPositiveWithLimit) {
+      result[p1][c1] += delta;
+      result[p1][c2] -= delta;
+      result[p2][c1] -= delta;
+      result[p2][c2] += delta;
+      successfulSwaps++;
+    } else if (canNegativeWithLimit) {
+      result[p1][c1] -= delta;
+      result[p1][c2] += delta;
+      result[p2][c1] += delta;
+      result[p2][c2] -= delta;
+      successfulSwaps++;
+    }
+    // どちらも不可能な場合はスキップ
+  }
+
+  console.log(`Random supply: ${successfulSwaps} swaps performed`);
+  return result as Record<PortId, Record<'red' | 'blue' | 'yellow' | 'green', number>>;
+}

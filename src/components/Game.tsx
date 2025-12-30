@@ -5,7 +5,7 @@ import { InfoPanel } from './InfoPanel';
 import { TutorialModal } from './TutorialModal';
 import { GameAnalysis } from './GameAnalysis';
 import { useGameState } from '../hooks/useGameState';
-import type { PortId, CargoColor, GameMode } from '../types/game';
+import type { PortId, CargoColor, GameMode, SupplyMode } from '../types/game';
 import './Game.css';
 
 // 船の操作順序
@@ -13,10 +13,11 @@ const SHIP_ORDER = ['large', 'medium', 'small'] as const;
 
 interface GameProps {
   gameMode?: GameMode;
+  supplyMode?: SupplyMode;
   onReturnToStart?: () => void;
 }
 
-export const Game: React.FC<GameProps> = ({ gameMode = 'normal', onReturnToStart }) => {
+export const Game: React.FC<GameProps> = ({ gameMode = 'normal', supplyMode = 'fixed', onReturnToStart }) => {
   const {
     gameState,
     stateHistory,
@@ -31,7 +32,7 @@ export const Game: React.FC<GameProps> = ({ gameMode = 'normal', onReturnToStart
     getAdjacentPorts,
     getShipRemainingCapacity,
     canLoadColor,
-  } = useGameState(gameMode);
+  } = useGameState(gameMode, supplyMode);
 
   // 現在操作中の船のインデックス（大型→中型→小型の順）
   const [currentShipIndex, setCurrentShipIndex] = useState(0);

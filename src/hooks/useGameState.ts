@@ -6,6 +6,7 @@ import type {
   CargoColor,
   GameLogEntry,
   GameMode,
+  SupplyMode,
 } from '../types/game';
 import {
   INITIAL_PORTS,
@@ -16,6 +17,7 @@ import {
   SUPPLY_STOCK_LIMITS,
   getDemandLevel,
   getDemandForTurn,
+  generateRandomSupplyPerTurn,
 } from '../config/gameConfig';
 
 // ディープコピーユーティリティ
@@ -27,18 +29,46 @@ function deepCopy<T>(obj: T): T {
 const ENDLESS_MAX_TURNS = 99;
 
 // 初期ゲーム状態を生成
-function createInitialGameState(gameMode: GameMode = 'normal'): GameState {
+function createInitialGameState(gameMode: GameMode = 'normal', supplyMode: SupplyMode = 'fixed'): GameState {
   const isEndless = gameMode === 'endless';
-  const startMessage = isEndless
+  const isRandomSupply = supplyMode === 'random';
+
+  // 供給モードに応じてメッセージを調整
+  let startMessage = isEndless
     ? 'エンドレスモード開始！在庫が切れるまで挑戦しよう！'
     : 'ゲーム開始！30ターン生き残れ！';
+  if (isRandomSupply) {
+    startMessage += '（ランダム供給モード）';
+  }
+
+  // 港の初期状態を作成
+  const ports = deepCopy(INITIAL_PORTS);
+
+  // ランダム供給モードの場合、supplyPerTurnを差し替え＆初期在庫をsupplyPerTurnの2倍に設定
+  if (isRandomSupply) {
+    const randomSupply = generateRandomSupplyPerTurn();
+    console.log('Random supply generated:', randomSupply);
+    for (const portId of Object.keys(randomSupply) as PortId[]) {
+      if (ports[portId] && ports[portId].type === 'supply') {
+        ports[portId].supplyPerTurn = randomSupply[portId];
+        // 初期在庫をsupplyPerTurnの2倍に設定
+        ports[portId].cargoStock = {
+          red: randomSupply[portId].red * 2,
+          blue: randomSupply[portId].blue * 2,
+          yellow: randomSupply[portId].yellow * 2,
+          green: randomSupply[portId].green * 2,
+        };
+      }
+    }
+  }
+
   return {
     turn: 1,
     maxTurns: isEndless ? ENDLESS_MAX_TURNS : GAME_CONFIG.maxTurns,
     status: 'playing',
     demandLevel: 1,
     gameMode,
-    ports: deepCopy(INITIAL_PORTS),
+    ports,
     ships: deepCopy(INITIAL_SHIPS),
     cityInventories: deepCopy(INITIAL_CITY_INVENTORIES),
     routes: deepCopy(ROUTES),
@@ -47,8 +77,8 @@ function createInitialGameState(gameMode: GameMode = 'normal'): GameState {
   };
 }
 
-export function useGameState(initialGameMode: GameMode = 'normal') {
-  const [gameState, setGameState] = useState<GameState>(() => createInitialGameState(initialGameMode));
+export function useGameState(initialGameMode: GameMode = 'normal', initialSupplyMode: SupplyMode = 'fixed') {
+  const [gameState, setGameState] = useState<GameState>(() => createInitialGameState(initialGameMode, initialSupplyMode));
   // undo用の履歴を保持（全履歴）
   const [stateHistory, setStateHistory] = useState<GameState[]>([]);
   // 積み込み処理の重複防止用
@@ -542,9 +572,9 @@ export function useGameState(initialGameMode: GameMode = 'normal') {
   // undoが可能かどうか
   const canUndo = stateHistory.length > 0;
 
-  // ゲームをリセット（gameModeを指定可能、省略時は現在のモードを維持）
-  const resetGame = useCallback((newGameMode?: GameMode) => {
-    setGameState((prev) => createInitialGameState(newGameMode ?? prev.gameMode));
+  // ゲームをリセット（gameModeとsupplyModeを指定可能）
+  const resetGame = useCallback((newGameMode?: GameMode, newSupplyMode?: SupplyMode) => {
+    setGameState((prev) => createInitialGameState(newGameMode ?? prev.gameMode, newSupplyMode ?? 'fixed'));
     setStateHistory([]);
   }, []);
 

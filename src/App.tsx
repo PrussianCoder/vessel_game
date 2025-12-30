@@ -2,16 +2,18 @@ import { useState } from 'react';
 import { Game } from './components/Game';
 import { StartScreen } from './components/StartScreen';
 import { TutorialModal } from './components/TutorialModal';
-import type { GameMode } from './types/game';
+import type { GameMode, SupplyMode } from './types/game';
 import './App.css';
 
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const [gameMode, setGameMode] = useState<GameMode>('normal');
+  const [supplyMode, setSupplyMode] = useState<SupplyMode>('fixed');
   const [showGuide, setShowGuide] = useState(false);
 
-  const handleStartGame = (mode: GameMode) => {
+  const handleStartGame = (mode: GameMode, supply: SupplyMode) => {
     setGameMode(mode);
+    setSupplyMode(supply);
     setGameStarted(true);
   };
 
@@ -36,7 +38,7 @@ function App() {
     );
   }
 
-  return <Game key={gameMode} gameMode={gameMode} onReturnToStart={handleReturnToStart} />;
+  return <Game key={`${gameMode}-${supplyMode}`} gameMode={gameMode} supplyMode={supplyMode} onReturnToStart={handleReturnToStart} />;
 }
 
 export default App;
